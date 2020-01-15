@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">ChatWebMySql</string>
+    <string name="register">Registrarse</string>
+    <string name="forgot">Olvidaste tu contraseña?</string>
+    <string name="login_now">Ingresar aqui</string>
+
+    <string name="title_activity_registration">Registration</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="about_activity_title">About Us</string>
+    <string name="about_activity_description"><b>Boost Your Brand and Company Image with Premium Online Printing Services from Us ! </b></string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="domain">Domain</string>
+    <string name="website">BeingDev.com</string>
+    <string name="licence">License</string>
+    <string name="licencedesc">Lorem Ipsum</string>
+    <string name="changelog">Changelog</string>
+    <string name="changes">Lorem Ipsum</string>
+    <string name="login">Login</string>
+    <string name="wishlist">Wishlist</string>
+
+    <string name="register_now">Registrarse Ahora</string>
+    <string name="already_mem">Already a member ? </string>
+    <string name="noconnection">No hay conexión a internet</string>
+    <string name="registermail1">¡Este es Diago y Benitez, CEO de Web API! \n \n¡Bienvenido a bordo con nosotros en nombre de nuestro equipo! \n
+     ¡Prometemos brindarle una experiencia de compra inolvidable en el futuro! \n \n
+     Entonces, ¿qué estás esperando, comienza a comprar y obtén lo mejor de nuestros productos justo en tu puerta!
+     \n \n
+     ¡Estamos felices de ayudarte! ¡En caso de cualquier consulta, contáctenos a nuestros manejadores mencionados a continuación! \n \n
+     Teléfono: + 571-78508229 \n
+     Correo electrónico: prueba.correo7521@gmail.com \n
+     Dirección: Calle 100 # 8a 55 (226025)</string>
+</resources>
