@@ -5,8 +5,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -17,7 +19,9 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.dybcatering.chatwebmysql.AdaptadorGrupos.AdaptadorGrupo;
 import com.dybcatering.chatwebmysql.AdaptadorGrupos.ItemGrupo;
+import com.dybcatering.chatwebmysql.CrearGrupo.CrearGrupoActivity;
 import com.dybcatering.chatwebmysql.usersession.UserSession;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +40,9 @@ public class MainActivity extends AppCompatActivity implements AdaptadorGrupo.On
 	private AdaptadorGrupo mAdaptadorGrupo;
 	private ArrayList<Object> mItemGrupo;
 	private RequestQueue mRequestQueue;
+
+	FloatingActionButton fab;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,6 +50,15 @@ public class MainActivity extends AppCompatActivity implements AdaptadorGrupo.On
 
 		sessionManager = new UserSession(this);
 		sessionManager.checkLogin();
+		fab = findViewById(R.id.btn_add_func);
+
+		fab.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(MainActivity.this, CrearGrupoActivity.class);
+				startActivity(intent);
+			}
+		});
 
 		HashMap<String, String> user = sessionManager.getUserDetail();
 		String nombreusuario = user.get(UserSession.NAME);
