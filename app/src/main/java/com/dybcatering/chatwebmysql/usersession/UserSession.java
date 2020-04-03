@@ -252,6 +252,16 @@ public class UserSession {
 
     }
 
+    public HashMap<String, String> getUserDetail(){
+
+        HashMap<String, String> user = new HashMap<>();
+
+        user.put(ID, sharedPreferences.getString(ID, null));
+        user.put(EMAIL, sharedPreferences.getString(EMAIL, null));
+        user.put(NAME, sharedPreferences.getString(NAME, null));
+        return user;
+    }
+
     public boolean isLoggin(){
         return sharedPreferences.getBoolean(LOGIN, false);
     }
