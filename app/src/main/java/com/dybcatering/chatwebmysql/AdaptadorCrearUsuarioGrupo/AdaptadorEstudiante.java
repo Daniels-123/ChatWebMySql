@@ -1,27 +1,30 @@
-package com.dybcatering.chatwebmysql.AdaptadorGrupos;
+package com.dybcatering.chatwebmysql.AdaptadorCrearUsuarioGrupo;
 
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatCheckedTextView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dybcatering.chatwebmysql.AdaptadorGrupos.ItemGrupo;
 import com.dybcatering.chatwebmysql.R;
 
 import java.util.ArrayList;
 
 
-public class AdaptadorGrupo  extends RecyclerView.Adapter<AdaptadorGrupo.GrupoViewHolder> {
+public class AdaptadorEstudiante extends RecyclerView.Adapter<AdaptadorEstudiante.UsuarioViewHolder> {
 		private Context mContext;
 		private ArrayList<Object> mExampleList;
 		private OnItemClickListener mListener;
 
 
 
-	public AdaptadorGrupo(Context context, ArrayList<Object> exampleList) {
+	public AdaptadorEstudiante(Context context, ArrayList<Object> exampleList) {
 		mContext = context;
 		mExampleList = exampleList;
 	}
@@ -33,18 +36,18 @@ public class AdaptadorGrupo  extends RecyclerView.Adapter<AdaptadorGrupo.GrupoVi
 
 	@NonNull
 	@Override
-	public GrupoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-		View v = LayoutInflater.from(mContext).inflate(R.layout.itemgrupos, parent, false);
-		return new GrupoViewHolder(v);
+	public UsuarioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+		View v = LayoutInflater.from(mContext).inflate(R.layout.item_usuarios, parent, false);
+		return new UsuarioViewHolder(v);
 	}
 
 	@Override
-	public void onBindViewHolder(@NonNull GrupoViewHolder holder, int position) {
-		ItemGrupo mismoitem = (ItemGrupo) mExampleList.get(position);
+	public void onBindViewHolder(@NonNull UsuarioViewHolder holder, int position) {
+		ItemUsuario mismoitem = (ItemUsuario) mExampleList.get(position);
 
 		String nombregrupo =mismoitem.getNombre();
 
-		holder.mNombreCurso.setText(nombregrupo);
+		holder.mNombreUsuario.setText(nombregrupo);
 	}
 
 	@Override
@@ -56,15 +59,15 @@ public class AdaptadorGrupo  extends RecyclerView.Adapter<AdaptadorGrupo.GrupoVi
 		void onItemClick(int position);
 	}
 
-	public class GrupoViewHolder extends RecyclerView.ViewHolder {
+	public class UsuarioViewHolder extends RecyclerView.ViewHolder {
 
 
-		public TextView mNombreCurso;
+		public AppCompatCheckedTextView mNombreUsuario;
 
 
-		public GrupoViewHolder(View itemView) {
+		public UsuarioViewHolder(View itemView) {
 			super(itemView);
-			mNombreCurso= itemView.findViewById(R.id.titulo);
+			mNombreUsuario= itemView.findViewById(R.id.checked_text_view);
 
 			//mTextViewCreator = itemView.findViewById(R.id.text_view_creator);
 			//mTextViewDescription = itemView.findViewById(R.id.text_view_description);

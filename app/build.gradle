@@ -66,4 +66,9 @@ dependencies {
     //BCRYPT
     implementation 'org.mindrot:jbcrypt:0.4'
 
+
+    //emoji
+    implementation 'androidx.emoji:emoji-appcompat:1.0.0'
+    implementation 'androidx.emoji:emoji-bundled:1.0.0'
+
 }

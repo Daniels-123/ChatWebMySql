@@ -1,4 +1,4 @@
-package com.dybcatering.chatwebmysql.AdaptadorUsuarios;
+package com.dybcatering.chatwebmysql.AdaptadorCreacionUsuarios;
 
 import java.io.Serializable;
 

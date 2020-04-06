@@ -1,5 +1,6 @@
-package com.dybcatering.chatwebmysql.AdaptadorUsuarios;
+package com.dybcatering.chatwebmysql.AdaptadorCreacionUsuarios;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,14 +10,19 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.dybcatering.chatwebmysql.AdaptadorGrupos.AdaptadorGrupo;
 import com.dybcatering.chatwebmysql.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class CardViewDataAdapter extends
-		RecyclerView.Adapter<CardViewDataAdapter.ViewHolder> {
+public class CardViewDataAdapter extends RecyclerView.Adapter<CardViewDataAdapter.ViewHolder> {
 
 	private List<Student> stList;
+	private Context mContext;
+	private ArrayList<Object> mExampleList;
+	private AdaptadorGrupo.OnItemClickListener mListener;
+
 
 	public CardViewDataAdapter(List<Student> students) {
 		this.stList = students;
