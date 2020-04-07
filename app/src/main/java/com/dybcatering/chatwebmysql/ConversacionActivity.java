@@ -1,11 +1,16 @@
 package com.dybcatering.chatwebmysql;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.emoji.bundled.BundledEmojiCompatConfig;
+import androidx.emoji.text.EmojiCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -26,6 +31,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ConversacionActivity extends AppCompatActivity implements AdaptadorMensajes.OnItemClickListener {
 
@@ -34,12 +41,15 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 	private AdaptadorMensajes mAdaptadorMensajes;
 	private ArrayList<Object> mItemMensajes;
 	private RequestQueue mRequestQueue;
-
-
-
+	final Handler handler = new Handler();
+	Timer timer = new Timer();
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		EmojiCompat.Config config = new BundledEmojiCompatConfig(this)
+				.setEmojiSpanIndicatorEnabled(true)
+				.setReplaceAll(true);
+		EmojiCompat.init(config);
 		setContentView(R.layout.activity_conversacion);
 
 		recyclergrupos = findViewById(R.id.rvMensajes);
@@ -49,20 +59,47 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 
 		mRequestQueue = Volley.newRequestQueue(ConversacionActivity.this);
 
-		ObtenerDatos();
+		TimerTask task = new TimerTask() {
+			@Override
+			public void run() {
+				handler.post(new Runnable() {
+					public void run() {
+						try {
+							//Ejecuta tu AsyncTask!
+							AsyncTask myTask = new AsyncTask() {
+								@Override
+								protected Object doInBackground(Object[] objects) {
+									return null;
+								}
+							};
+							ObtenerDatos();
+							myTask.execute();
+						} catch (Exception e) {
+							Log.e("error", e.getMessage());
+						}
+					}
+				});
+			}
+		};
+
+		timer.schedule(task, 0, 3000);
+
+
 	}
+
+
 
 	private void ObtenerDatos() {
 		String url = "http://192.168.1.101/loginapp/obtenerMensajes.php";
-		final ProgressDialog progressDialog = new ProgressDialog(ConversacionActivity.this);
-		progressDialog.setMessage("Cargando...");
-		progressDialog.show();
-		progressDialog.setCancelable(false);
+//		final ProgressDialog progressDialog = new ProgressDialog(ConversacionActivity.this);
+	//	progressDialog.setMessage("Cargando...");
+	//	progressDialog.show();
+//		progressDialog.setCancelable(false);
 		StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
 				new Response.Listener<String>() {
 					@Override
 					public void onResponse(String response) {
-						progressDialog.dismiss();
+						//progressDialog.dismiss();
 						try {
 							JSONObject jsonObject = new JSONObject(response);
 							JSONArray jsonArray = jsonObject.getJSONArray("Mensajes");
@@ -82,7 +119,7 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 
 						} catch (JSONException e) {
 							e.printStackTrace();
-							progressDialog.dismiss();
+						//	progressDialog.dismiss();
 							Toast toast= Toast.makeText(ConversacionActivity.this,
 									"Parece que algo salió mal o aun no has agregado cursos", Toast.LENGTH_SHORT);
 							toast.setGravity(Gravity.CENTER_HORIZONTAL| Gravity.CENTER_HORIZONTAL, 0, 0);
@@ -95,7 +132,7 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				error.printStackTrace();
-				progressDialog.dismiss();
+			//	progressDialog.dismiss();
 				Toast.makeText(ConversacionActivity.this, "error de bd", Toast.LENGTH_SHORT).show();
 			}
 		}) ;
