@@ -169,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements AdaptadorGrupo.On
 
 	@Override
 	public void onItemClick(int position) {
-
+		Intent intent = new Intent(MainActivity.this, ConversacionActivity.class);
+		startActivity(intent);
 	}
 }

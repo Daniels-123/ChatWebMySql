@@ -15,13 +15,13 @@ import com.dybcatering.chatwebmysql.AdaptadorGrupos.ItemGrupo;
 import com.dybcatering.chatwebmysql.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class AdaptadorEstudiante extends RecyclerView.Adapter<AdaptadorEstudiante.UsuarioViewHolder> {
 		private Context mContext;
 		private ArrayList<Object> mExampleList;
-		private OnItemClickListener mListener;
-
+	private List<ItemUsuario> items = new ArrayList<>();
 
 
 	public AdaptadorEstudiante(Context context, ArrayList<Object> exampleList) {
@@ -29,10 +29,6 @@ public class AdaptadorEstudiante extends RecyclerView.Adapter<AdaptadorEstudiant
 		mExampleList = exampleList;
 	}
 
-	public void setOnClickItemListener(OnItemClickListener listener) {
-		mListener = listener;
-
-	}
 
 	@NonNull
 	@Override
@@ -55,11 +51,13 @@ public class AdaptadorEstudiante extends RecyclerView.Adapter<AdaptadorEstudiant
 		return mExampleList.size();
 	}
 
-	public interface OnItemClickListener {
-		void onItemClick(int position);
+
+	void loadItems(List<ItemUsuario> tournaments) {
+		this.items = tournaments;
+		notifyDataSetChanged();
 	}
 
-	public class UsuarioViewHolder extends RecyclerView.ViewHolder {
+	public class UsuarioViewHolder extends RecyclerView.ViewHolder  implements  View.OnClickListener{
 
 
 		public AppCompatCheckedTextView mNombreUsuario;
@@ -74,17 +72,20 @@ public class AdaptadorEstudiante extends RecyclerView.Adapter<AdaptadorEstudiant
 			//mBarrio = itemView.findViewById(R.id.text_barrio);
 			//mVistas = itemView.findViewById(R.id.text_view_vistas);
 
-			itemView.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					if (mListener != null) {
-						int position = getAdapterPosition();
-						if (position != RecyclerView.NO_POSITION) {
-							mListener.onItemClick(position);
-						}
-					}
-				}
-			});
+
+		}
+
+		@Override
+		public void onClick(View v) {
+			int adapterPosition = getAdapterPosition();
+			if (!items.get(adapterPosition).getChecked()) {
+				mNombreUsuario.setChecked(true);
+				items.get(adapterPosition).setChecked(true);
+			}
+			else  {
+				mNombreUsuario.setChecked(false);
+				items.get(adapterPosition).setChecked(false);
+			}
 		}
 	}
 

@@ -39,7 +39,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrearGrupoActivity extends AppCompatActivity implements AdaptadorEstudiante.OnItemClickListener, AdaptadorGrupo.OnItemClickListener {
+public class CrearGrupoActivity extends AppCompatActivity {
 
 	private Toolbar toolbar;
 
@@ -175,7 +175,7 @@ public class CrearGrupoActivity extends AppCompatActivity implements AdaptadorEs
 							}
 							mAdaptadorUsuario = new AdaptadorEstudiante(CrearGrupoActivity.this,mItemUsuario);
 							mRecyclerView.setAdapter(mAdaptadorUsuario);
-							mAdaptadorUsuario.setOnClickItemListener(CrearGrupoActivity.this);
+//							mAdaptadorUsuario.setOnClickItemListener(CrearGrupoActivity.this);
 
 						} catch (JSONException e) {
 							e.printStackTrace();
@@ -208,12 +208,6 @@ public class CrearGrupoActivity extends AppCompatActivity implements AdaptadorEs
 		RequestQueue requestQueue = Volley.newRequestQueue(CrearGrupoActivity.this);
 		requestQueue.add(stringRequest);
 	}
-
-	@Override
-	public void onItemClick(int position) {
-
-	}
-
 	@Override
 	public void onPointerCaptureChanged(boolean hasCapture) {
 
