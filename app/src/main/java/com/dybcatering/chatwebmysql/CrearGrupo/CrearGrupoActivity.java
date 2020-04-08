@@ -153,7 +153,7 @@ public class CrearGrupoActivity extends AppCompatActivity {
 
 	private void ObtenerDatos() {
 
-		String url = "http://192.168.1.101/loginapp/listarusuarios.php";
+		String url = "http://192.168.43.188/webdyb/loginapp/listarusuarios.php";
 		final ProgressDialog progressDialog = new ProgressDialog(CrearGrupoActivity.this);
 		progressDialog.setMessage("Cargando...");
 		progressDialog.show();

@@ -71,4 +71,7 @@ dependencies {
     implementation 'androidx.emoji:emoji-appcompat:1.0.0'
     implementation 'androidx.emoji:emoji-bundled:1.0.0'
 
+    //compatibilidad emoji a utf
+    implementation 'org.apache.commons:commons-lang3:3.4'
+
 }

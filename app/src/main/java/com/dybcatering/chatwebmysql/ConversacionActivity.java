@@ -3,7 +3,9 @@ package com.dybcatering.chatwebmysql;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.emoji.bundled.BundledEmojiCompatConfig;
 import androidx.emoji.text.EmojiCompat;
+import androidx.emoji.widget.EmojiEditText;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.ProgressDialog;
@@ -12,8 +14,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -26,11 +31,14 @@ import com.dybcatering.chatwebmysql.AdaptadorMensajes.AdaptadorMensajes;
 import com.dybcatering.chatwebmysql.AdaptadorMensajes.Mensaje;
 import com.dybcatering.chatwebmysql.usersession.UserSession;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -43,23 +51,26 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 	private RequestQueue mRequestQueue;
 	final Handler handler = new Handler();
 	Timer timer = new Timer();
-	@Override
+	EmojiEditText etTexto;
+	Button btEnviar;
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		EmojiCompat.Config config = new BundledEmojiCompatConfig(this)
-				.setEmojiSpanIndicatorEnabled(true)
 				.setReplaceAll(true);
 		EmojiCompat.init(config);
 		setContentView(R.layout.activity_conversacion);
 
+		etTexto = findViewById(R.id.etTexto);
 		recyclergrupos = findViewById(R.id.rvMensajes);
-		recyclergrupos.setLayoutManager(new GridLayoutManager(getApplicationContext(), 1));
-
+        recyclergrupos.setLayoutManager(new GridLayoutManager(getApplicationContext(), 1));
 		mItemMensajes = new ArrayList<>();
 
 		mRequestQueue = Volley.newRequestQueue(ConversacionActivity.this);
 
-		TimerTask task = new TimerTask() {
+		btEnviar = findViewById(R.id.btnEnviar);
+	/*	TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
 				handler.post(new Runnable() {
@@ -82,15 +93,27 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 			}
 		};
 
-		timer.schedule(task, 0, 3000);
+		timer.schedule(task, 0, 3000);*/
+		ObtenerDatos();
 
+		btEnviar.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(etTexto.getText().toString().isEmpty()) {
+					Toast.makeText(ConversacionActivity.this, "Se te olvido escribir el mensaje.", Toast.LENGTH_LONG).show();
+				} else {
+					enviarMensaje();
+					ObtenerDatos();
+				}
+			}
+		});
 
 	}
 
 
 
 	private void ObtenerDatos() {
-		String url = "http://192.168.1.101/loginapp/obtenerMensajes.php";
+		String url = "http://192.168.0.11/webdyb/loginapp/obtenerMensajes.php";
 //		final ProgressDialog progressDialog = new ProgressDialog(ConversacionActivity.this);
 	//	progressDialog.setMessage("Cargando...");
 	//	progressDialog.show();
@@ -115,6 +138,7 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 							}
 							mAdaptadorMensajes = new AdaptadorMensajes(ConversacionActivity.this,mItemMensajes);
 							recyclergrupos.setAdapter(mAdaptadorMensajes);
+
 							mAdaptadorMensajes.setOnClickItemListener(ConversacionActivity.this);
 
 						} catch (JSONException e) {
@@ -150,7 +174,46 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 	}
 
 
+	public void enviarMensaje() {
 
+	    //String mensaje = etTexto.getText().toString();
+        //   final String mensajeservidor = StringEscapeUtils.escapeJava(mensaje);
+		StringRequest stringRequest = new StringRequest(Request.Method.POST, getResources().getString(R.string.URL_ENVIAR_MENSAJE),
+				new Response.Listener<String>() {
+
+					@Override
+					public void onResponse(String response) {
+						// En este apartado se programa lo que deseamos hacer en caso de no haber errores
+						Toast.makeText(ConversacionActivity.this, response, Toast.LENGTH_LONG).show();
+						ObtenerDatos();
+						etTexto.setText("");
+					}
+				}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				// En caso de tener algun error en la obtencion de los datos
+				Toast.makeText(ConversacionActivity.this, "ERROR EN LA CONEXIÓN", Toast.LENGTH_LONG).show();
+			}
+		}){
+			@Override
+			protected Map<String, String> getParams() throws AuthFailureError {
+
+				// En este metodo se hace el envio de valores de la aplicacion al servidor
+
+				Map<String, String> parametros = new Hashtable<String, String>();
+				parametros.put("usuario", "3");//usuario.getUsuario());
+				parametros.put("grupo", "2");// usuarioDestino.getUsuario());
+
+                parametros.put("mensaje", etTexto.getText().toString());
+                return parametros;
+			}
+		};
+
+		RequestQueue requestQueue = Volley.newRequestQueue(this);
+		requestQueue.add(stringRequest);
+	}
+
+	
 
 	@Override
 	public void onItemClick(int position) {

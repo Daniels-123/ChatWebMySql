@@ -30,4 +30,5 @@
      Teléfono: + 571-78508229 \n
      Correo electrónico: prueba.correo7521@gmail.com \n
      Dirección: Calle 100 # 8a 55 (226025)</string>
+    <string name="URL_ENVIAR_MENSAJE">http://192.168.0.11/webdyb/loginapp/insertarMensaje.php</string>
 </resources>

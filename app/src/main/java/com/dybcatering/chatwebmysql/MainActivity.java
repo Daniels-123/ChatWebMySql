@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements AdaptadorGrupo.On
 
 	private void ObtenerDatos() {
 
-		String url = "http://192.168.1.101/loginapp/listargrupos.php";
+		String url = "http://192.168.43.188/webdyb/loginapp/listargrupos.php";
 		final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
 		progressDialog.setMessage("Cargando...");
 		progressDialog.show();

@@ -2,6 +2,8 @@ package com.dybcatering.chatwebmysql;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.emoji.bundled.BundledEmojiCompatConfig;
+import androidx.emoji.text.EmojiCompat;
 
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -39,6 +41,11 @@ public class LoginActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		//EmojiCompat.Config config = new BundledEmojiCompatConfig(this)
+		//		.setReplaceAll(true);
+		//EmojiCompat.init(config);
+
 		setContentView(R.layout.activity_login);
 
 		new CheckInternetConnection(this).checkConnection();
