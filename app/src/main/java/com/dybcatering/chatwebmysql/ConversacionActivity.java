@@ -103,7 +103,7 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 					Toast.makeText(ConversacionActivity.this, "Se te olvido escribir el mensaje.", Toast.LENGTH_LONG).show();
 				} else {
 					enviarMensaje();
-					ObtenerDatos();
+				//	ObtenerDatos();
 				}
 			}
 		});

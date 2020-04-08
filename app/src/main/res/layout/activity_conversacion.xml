@@ -42,7 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
-        android:background="@drawable/fondochat">
+        android:background="#eee">
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -71,6 +71,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <androidx.emoji.widget.EmojiEditText
+
             android:id="@+id/etTexto"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -86,12 +87,12 @@
 
         <Button
             android:id="@+id/btnEnviar"
-            android:layout_width="80dp"
+            android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:text="Enviar"
+            android:background="@android:drawable/ic_menu_send"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
