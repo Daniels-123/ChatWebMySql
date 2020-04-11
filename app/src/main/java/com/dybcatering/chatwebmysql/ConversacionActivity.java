@@ -1,9 +1,9 @@
 package com.dybcatering.chatwebmysql;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.emoji.bundled.BundledEmojiCompatConfig;
-import androidx.emoji.text.EmojiCompat;
-import androidx.emoji.widget.EmojiEditText;
+//import androidx.emoji.bundled.BundledEmojiCompatConfig;
+//import androidx.emoji.text.EmojiCompat;
+//import androidx.emoji.widget.EmojiEditText;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,10 +12,14 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -30,8 +34,13 @@ import com.dybcatering.chatwebmysql.AdaptadorGrupos.ItemGrupo;
 import com.dybcatering.chatwebmysql.AdaptadorMensajes.AdaptadorMensajes;
 import com.dybcatering.chatwebmysql.AdaptadorMensajes.Mensaje;
 import com.dybcatering.chatwebmysql.usersession.UserSession;
+import com.rockerhieu.emojicon.EmojiconEditText;
+import com.rockerhieu.emojicon.EmojiconGridFragment;
+import com.rockerhieu.emojicon.EmojiconTextView;
+import com.rockerhieu.emojicon.EmojiconsFragment;
+import com.rockerhieu.emojicon.emoji.Emojicon;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+//import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,7 +51,8 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ConversacionActivity extends AppCompatActivity implements AdaptadorMensajes.OnItemClickListener {
+public class ConversacionActivity extends AppCompatActivity  implements EmojiconGridFragment.OnEmojiconClickedListener,
+		EmojiconsFragment.OnEmojiconBackspaceClickedListener, AdaptadorMensajes.OnItemClickListener {
 
 	RecyclerView recyclergrupos;
 	UserSession sessionManager;
@@ -51,25 +61,64 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 	private RequestQueue mRequestQueue;
 	final Handler handler = new Handler();
 	Timer timer = new Timer();
-	EmojiEditText etTexto;
+	//EmojiEditText etTexto;
 	Button btEnviar;
+	LinearLayout linearhorizontal;
+	ScrollView scrollView;
+	EmojiconEditText mEditText;
+	EmojiconTextView mTextView;
+	Button button;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		EmojiCompat.Config config = new BundledEmojiCompatConfig(this)
-				.setReplaceAll(true);
-		EmojiCompat.init(config);
+	//	EmojiCompat.Config config = new BundledEmojiCompatConfig(this)
+	//			.setReplaceAll(true);
+	//	EmojiCompat.init(config);
 		setContentView(R.layout.activity_conversacion);
 
-		etTexto = findViewById(R.id.etTexto);
+		mEditText = findViewById(R.id.editEmojicon);
+		button = findViewById(R.id.abriremojis);
+		linearhorizontal = findViewById(R.id.linearhorizontal);
+		scrollView = findViewById(R.id.scroll);
+
+		mEditText.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+			}
+
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				mTextView.setText(s);
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+
+			}
+		});
+
+
+		button.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				linearhorizontal.setVisibility(View.GONE);
+				setEmojiconFragment(false);
+
+			}
+		});
+
+
+
+	//	etTexto = findViewById(R.id.etTexto);
 		recyclergrupos = findViewById(R.id.rvMensajes);
         recyclergrupos.setLayoutManager(new GridLayoutManager(getApplicationContext(), 1));
 		mItemMensajes = new ArrayList<>();
 
 		mRequestQueue = Volley.newRequestQueue(ConversacionActivity.this);
 
-		btEnviar = findViewById(R.id.btnEnviar);
+		//btEnviar = findViewById(R.id.btnEnviar);
 	/*	TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
@@ -96,24 +145,38 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 		timer.schedule(task, 0, 3000);*/
 		ObtenerDatos();
 
-		btEnviar.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if(etTexto.getText().toString().isEmpty()) {
-					Toast.makeText(ConversacionActivity.this, "Se te olvido escribir el mensaje.", Toast.LENGTH_LONG).show();
-				} else {
-					enviarMensaje();
+//		btEnviar.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+	//			if(etTexto.getText().toString().isEmpty()) {
+//					Toast.makeText(ConversacionActivity.this, "Se te olvido escribir el mensaje.", Toast.LENGTH_LONG).show();
+	//			} else {
+//					enviarMensaje();
 				//	ObtenerDatos();
-				}
-			}
-		});
+	//			}
+//			}
+//		});
+
+//		btEnviar.setOnLongClickListener(new View.OnLongClickListener() {
+//			@Override
+//			public boolean onLongClick(View v) {
+//				Toast.makeText(ConversacionActivity.this, "el texto es hola", Toast.LENGTH_SHORT).show();
+//				GrabarVoz();
+//
+//				return true;
+//			}
+//		});
 
 	}
 
 
 
+	private void GrabarVoz() {
+	}
+
+
 	private void ObtenerDatos() {
-		String url = "http://192.168.0.11/webdyb/loginapp/obtenerMensajes.php";
+		String url = "http://192.168.0.13/webdyb/loginapp/obtenerMensajes.php";
 //		final ProgressDialog progressDialog = new ProgressDialog(ConversacionActivity.this);
 	//	progressDialog.setMessage("Cargando...");
 	//	progressDialog.show();
@@ -186,7 +249,7 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 						// En este apartado se programa lo que deseamos hacer en caso de no haber errores
 						Toast.makeText(ConversacionActivity.this, response, Toast.LENGTH_LONG).show();
 						ObtenerDatos();
-						etTexto.setText("");
+	//					etTexto.setText("");
 					}
 				}, new Response.ErrorListener() {
 			@Override
@@ -204,7 +267,7 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 				parametros.put("usuario", "3");//usuario.getUsuario());
 				parametros.put("grupo", "2");// usuarioDestino.getUsuario());
 
-                parametros.put("mensaje", etTexto.getText().toString());
+      //          parametros.put("mensaje", etTexto.getText().toString());
                 return parametros;
 			}
 		};
@@ -213,10 +276,30 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 		requestQueue.add(stringRequest);
 	}
 
-	
+
+	private void setEmojiconFragment(boolean useSystemDefault) {
+
+
+		getSupportFragmentManager()
+				.beginTransaction()
+				.replace(R.id.emojicons, EmojiconsFragment.newInstance(useSystemDefault))
+				.commit();
+
+	}
+
 
 	@Override
 	public void onItemClick(int position) {
 
+	}
+
+	@Override
+	public void onEmojiconClicked(Emojicon emojicon) {
+		EmojiconsFragment.input(mEditText, emojicon);
+	}
+
+	@Override
+	public void onEmojiconBackspaceClicked(View v) {
+		EmojiconsFragment.backspace(mEditText);
 	}
 }

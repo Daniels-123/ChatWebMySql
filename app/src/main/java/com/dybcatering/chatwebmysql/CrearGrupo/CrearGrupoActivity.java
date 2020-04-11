@@ -2,11 +2,11 @@ package com.dybcatering.chatwebmysql.CrearGrupo;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.emoji.bundled.BundledEmojiCompatConfig;
-import androidx.emoji.text.EmojiCompat;
-import androidx.emoji.widget.EmojiButton;
-import androidx.emoji.widget.EmojiEditText;
-import androidx.emoji.widget.EmojiTextView;
+//import androidx.emoji.bundled.BundledEmojiCompatConfig;
+//import androidx.emoji.text.EmojiCompat;
+//import androidx.emoji.widget.EmojiButton;
+//import androidx.emoji.widget.EmojiEditText;
+//import androidx.emoji.widget.EmojiTextView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -51,9 +51,9 @@ public class CrearGrupoActivity extends AppCompatActivity {
 
 	private Button btnSelection;
 
-	EmojiTextView edttextview;
-	EmojiButton edtbtn;
-	EmojiEditText edtemoji;
+//	EmojiTextView edttextview;
+//	EmojiButton edtbtn;
+//	EmojiEditText edtemoji;
 
 	private AdaptadorEstudiante mAdaptadorUsuario;
 	private ArrayList<Object> mItemUsuario;
@@ -67,24 +67,24 @@ public class CrearGrupoActivity extends AppCompatActivity {
 		//toolbar = findViewById(R.id.toolbar);
 
 
-		EmojiCompat.Config config = new BundledEmojiCompatConfig(this)
-				.setEmojiSpanIndicatorEnabled(true)
-				.setReplaceAll(true);
-		EmojiCompat.init(config);
+//		EmojiCompat.Config config = new BundledEmojiCompatConfig(this)
+//				.setEmojiSpanIndicatorEnabled(true)
+//				.setReplaceAll(true);
+//		EmojiCompat.init(config);
 		setContentView(R.layout.activity_crear_grupo);
-		edtemoji = findViewById(R.id.nombregrupo);
-		edtbtn = findViewById(R.id.emobtn);
-		edttextview = findViewById(R.id.emojiresultado);
+//		edtemoji = findViewById(R.id.nombregrupo);
+//		edtbtn = findViewById(R.id.emobtn);
+//		edttextview = findViewById(R.id.emojiresultado);
 
-		edtemoji.setText(new StringBuilder(new String(Character.toChars(0x2764))).append("Mostrar Datos"));
+//		edtemoji.setText(new StringBuilder(new String(Character.toChars(0x2764))).append("Mostrar Datos"));
 
-		edtbtn.setOnClickListener(new View.OnClickListener() {
+/*		edtbtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				edttextview.setText(edtemoji.getText().toString());
 				Toast.makeText(CrearGrupoActivity.this, "el texto es "+ edtemoji.getText().toString(), Toast.LENGTH_SHORT).show();
 			}
-		});
+		});*/
 
 		btnSelection = (Button) findViewById(R.id.btn_show);
 

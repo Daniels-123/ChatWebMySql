@@ -2,8 +2,8 @@ package com.dybcatering.chatwebmysql;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.emoji.bundled.BundledEmojiCompatConfig;
-import androidx.emoji.text.EmojiCompat;
+//import androidx.emoji.bundled.BundledEmojiCompatConfig;
+//import androidx.emoji.text.EmojiCompat;
 
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -28,7 +28,7 @@ import com.kaopiz.kprogresshud.KProgressHUD;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mindrot.jbcrypt.BCrypt;
+//import org.mindrot.jbcrypt.BCrypt;
 
 public class LoginActivity extends AppCompatActivity {
 	private EditText edtemail,edtpass;
