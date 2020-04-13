@@ -6,17 +6,26 @@ public class Mensaje {
 	public String Usuario;
 	public String Grupo;
 	private String Enviado;
+	private String TipoMensaje;
 
 	public Mensaje() {
 	}
 
-	public Mensaje(String mensaje, String usuario, String grupo, String enviado) {
+	public Mensaje(String mensaje, String usuario, String grupo, String enviado, String tipoMensaje) {
 		MensajeEnviado = mensaje;
 		Usuario = usuario;
 		Grupo = grupo;
 		Enviado = enviado;
+		TipoMensaje = tipoMensaje;
 	}
 
+	public String getTipoMensaje() {
+		return TipoMensaje;
+	}
+
+	public void setTipoMensaje(String tipoMensaje) {
+		TipoMensaje = tipoMensaje;
+	}
 
 	public String getUsuario() {
 		return Usuario;

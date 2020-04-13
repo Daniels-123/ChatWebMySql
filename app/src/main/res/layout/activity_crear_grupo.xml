@@ -9,7 +9,7 @@
     android:orientation="vertical">
 
 
-    <androidx.emoji.widget.EmojiEditText
+    <com.rockerhieu.emojicon.EmojiconEditText
         android:id="@+id/nombregrupo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,15 +17,12 @@
         android:hint="Nombre del grupo"
         android:inputType="textPersonName" />
 
-    <androidx.emoji.widget.EmojiButton
+    <Button
         android:id="@+id/emobtn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:text="guardar"/>
 
-    <androidx.emoji.widget.EmojiTextView
-        android:id="@+id/emojiresultado"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/my_recycler_view"

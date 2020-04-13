@@ -243,11 +243,12 @@ public class UserSession {
         editor = sharedPreferences.edit();
     }
 
-    public void createSession(String name, String email){
+    public void createSession(String name, String email, String id){
 
         editor.putBoolean(LOGIN, true);
         editor.putString(NAME, name);
         editor.putString(EMAIL, email);
+        editor.putString(ID, id);
         editor.apply();
 
     }

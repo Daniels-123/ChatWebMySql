@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements AdaptadorGrupo.On
 
 	private void ObtenerDatos() {
 
-		String url = "http://192.168.0.13/webdyb/loginapp/listargrupos.php";
+		String url = "http://192.168.0.11/webdyb/loginapp/listargrupos.php";
 		final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
 		progressDialog.setMessage("Cargando...");
 		progressDialog.show();
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements AdaptadorGrupo.On
 			public void onErrorResponse(VolleyError error) {
 				error.printStackTrace();
 				progressDialog.dismiss();
-				Toast.makeText(MainActivity.this, "error de bd", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MainActivity.this, "error de bd" + error, Toast.LENGTH_SHORT).show();
 			}
 		}) ;
 		/* {

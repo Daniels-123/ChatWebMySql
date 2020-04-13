@@ -63,84 +63,19 @@ public class CrearGrupoActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-
-		//toolbar = findViewById(R.id.toolbar);
-
-
-//		EmojiCompat.Config config = new BundledEmojiCompatConfig(this)
-//				.setEmojiSpanIndicatorEnabled(true)
-//				.setReplaceAll(true);
-//		EmojiCompat.init(config);
 		setContentView(R.layout.activity_crear_grupo);
-//		edtemoji = findViewById(R.id.nombregrupo);
-//		edtbtn = findViewById(R.id.emobtn);
-//		edttextview = findViewById(R.id.emojiresultado);
-
-//		edtemoji.setText(new StringBuilder(new String(Character.toChars(0x2764))).append("Mostrar Datos"));
-
-/*		edtbtn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				edttextview.setText(edtemoji.getText().toString());
-				Toast.makeText(CrearGrupoActivity.this, "el texto es "+ edtemoji.getText().toString(), Toast.LENGTH_SHORT).show();
-			}
-		});*/
 
 		btnSelection = (Button) findViewById(R.id.btn_show);
 
-	//	studentList = new ArrayList<Student>();
-
-
-		/***
-		 *  Se eliminan los metodos de ejemplo
-		 */
-	/*	for (int i = 1; i <= 15; i++) {
-			Student st = new Student("Student " + i, "androidstudent" + i
-					+ "@gmail.com", false);
-
-			studentList.add(st);
-		}*/
 
 
 		mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
 
-		// use this setting to improve performance if you know that changes
-		// in content do not change the layout size of the RecyclerView
 		mRecyclerView.setHasFixedSize(true);
 
-		// use a linear layout manager
+
 		mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-		// create an Object for Adapter
-		/*mAdapter = new CardViewDataAdapter(studentList);
-
-		// set the adapter object to the Recyclerview
-		mRecyclerView.setAdapter(mAdapter);
-
-		btnSelection.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				String data = "";
-				List<Student> stList = ((CardViewDataAdapter) mAdapter)
-						.getStudentist();
-
-				for (int i = 0; i < stList.size(); i++) {
-					Student singleStudent = stList.get(i);
-					if (singleStudent.isSelected() == true) {
-
-						data = data + "\n" + singleStudent.getName().toString();
-
-					}
-
-				}
-
-				Toast.makeText(CrearGrupoActivity.this,
-						"Estudiantes Seleccionados: \n" + data, Toast.LENGTH_LONG)
-						.show();
-			}
-		});
-*/
 
 		mItemUsuario = new ArrayList<>();
 
@@ -153,7 +88,7 @@ public class CrearGrupoActivity extends AppCompatActivity {
 
 	private void ObtenerDatos() {
 
-		String url = "http://192.168.43.188/webdyb/loginapp/listarusuarios.php";
+		String url = "http://192.168.0.13/webdyb/loginapp/listarusuarios.php";
 		final ProgressDialog progressDialog = new ProgressDialog(CrearGrupoActivity.this);
 		progressDialog.setMessage("Cargando...");
 		progressDialog.show();

@@ -1,33 +1,42 @@
 package com.dybcatering.chatwebmysql;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 //import androidx.emoji.bundled.BundledEmojiCompatConfig;
 //import androidx.emoji.text.EmojiCompat;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.ServerError;
 import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.dybcatering.chatwebmysql.request.CheckInternetConnection;
-import com.dybcatering.chatwebmysql.request.LoginRequest;
+
 import com.dybcatering.chatwebmysql.usersession.UserSession;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 //import org.mindrot.jbcrypt.BCrypt;
 
 public class LoginActivity extends AppCompatActivity {
@@ -36,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
 	private TextView appname,forgotpass,registernow;
 	private RequestQueue requestQueue;
 	UserSession userSession;
+	private static String URL_LOGIN = "http://192.168.0.13/loginchat/login.php";
 
 	public static final String TAG = "MyTag";
 	@Override
@@ -48,7 +58,6 @@ public class LoginActivity extends AppCompatActivity {
 
 		setContentView(R.layout.activity_login);
 
-		new CheckInternetConnection(this).checkConnection();
 		userSession = new UserSession(this);
 		if (userSession.isLoggin()){
 			Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -91,77 +100,88 @@ public class LoginActivity extends AppCompatActivity {
 					pass = edtpass.getText().toString();
 
 					//String password = BCrypt.hashpw(pass, BCrypt.gensalt());
-
-					if (validateUsername(email) && validatePassword(pass)) { //Username and Password Validation
-
-						//Progress Bar while connection establishes
-
-						final KProgressHUD progressDialog = KProgressHUD.create(LoginActivity.this)
-								.setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-								.setLabel("Please wait")
-								.setCancellable(false)
-								.setAnimationSpeed(2)
-								.setDimAmount(0.5f)
-								.show();
+					if (!email.isEmpty() || !pass.isEmpty()) {
+						Login(email, pass);
+					} else {
+						edtemail.setError("Por favor inserte su correo");
+						edtpass.setError("Por favor inserte su contraseña");
 
 
-						LoginRequest loginRequest = new LoginRequest(email, pass, new Response.Listener<String>() {
-							@Override
-							public void onResponse(String response) {
-
-								progressDialog.dismiss();
-								// Response from the server is in the form if a JSON, so we need a JSON Object
-								try {
-									JSONObject jsonObject = new JSONObject(response);
-									if (jsonObject.getBoolean("success")) {
-
-										//Passing all received data from server to next activity
-										String sessionname = jsonObject.getString("name");
-										//sessionmobile = jsonObject.getString("mobile");
-										String sessionemail = jsonObject.getString("email");
-										//	String sessionphoto =  jsonObject.getString("url");
-
-										//create shared preference and store data
-										userSession.createSession(sessionname, sessionemail);
-
-										//count value of firebase cart and wishlist
-										//countFirebaseValues();
-
-										Intent loginSuccess = new Intent(LoginActivity.this, MainActivity.class);
-										startActivity(loginSuccess);
-										finish();
-									} else {
-										if (jsonObject.getString("status").equals("INVALID"))
-											Toast.makeText(LoginActivity.this, "Usuario no encontrado", Toast.LENGTH_SHORT).show();
-										else {
-											Toast.makeText(LoginActivity.this, "Contraseña Incorrecta", Toast.LENGTH_SHORT).show();
-										}
-									}
-								} catch (JSONException e) {
-									e.printStackTrace();
-									Toast.makeText(LoginActivity.this, "Error del servidor - Respuesta", Toast.LENGTH_SHORT).show();
-								}
-							}
-						}, new Response.ErrorListener() {
-							@Override
-							public void onErrorResponse(VolleyError error) {
-								progressDialog.dismiss();
-								if (error instanceof ServerError)
-									Toast.makeText(LoginActivity.this, "Error del servidor", Toast.LENGTH_SHORT).show();
-								else if (error instanceof TimeoutError)
-									Toast.makeText(LoginActivity.this, "Tiempo de conexión agotado", Toast.LENGTH_SHORT).show();
-								else if (error instanceof NetworkError)
-									Toast.makeText(LoginActivity.this, "Mala conexión de red", Toast.LENGTH_SHORT).show();
-							}
-						});
-						loginRequest.setTag(TAG);
-						requestQueue.add(loginRequest);
 					}
 
 				}
 			});
 		}
 	}
+
+	private void Login(final String email, final String password) {
+
+
+/*		StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_LOGIN,
+				new Response.Listener<String>() {
+					@Override
+					public void onResponse(String response) {
+						try {
+							JSONObject jsonObject = new JSONObject(response);
+							String success = jsonObject.getString("success");
+							JSONArray jsonArray = jsonObject.getJSONArray("login");
+
+							if (success.equals("1")) {
+
+								for (int i = 0; i < jsonArray.length(); i++) {
+
+									JSONObject object = jsonArray.getJSONObject(i);
+
+									String name = object.getString("name").trim();
+									String email = object.getString("email").trim();
+									String id = object.getString("id").trim();
+*/
+									userSession.createSession("Daniel", email, "7");
+
+									Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+									intent.putExtra("email", email);
+//									intent.putExtra("email", email);
+									startActivity(intent);
+									finish();
+/*
+					//				loading.setVisibility(View.GONE);
+
+
+								}
+
+							}
+
+						} catch (JSONException e) {
+							e.printStackTrace();
+					//		loading.setVisibility(View.GONE);
+					//		btn_login.setVisibility(View.VISIBLE);
+							Toast.makeText(LoginActivity.this, "Error " +e.toString(), Toast.LENGTH_SHORT).show();
+						}
+					}
+				},
+				new Response.ErrorListener() {
+					@Override
+					public void onErrorResponse(VolleyError error) {
+					//	loading.setVisibility(View.GONE);
+					//	btn_login.setVisibility(View.VISIBLE);
+						Toast.makeText(LoginActivity.this, "Error " +error.toString(), Toast.LENGTH_SHORT).show();
+					}
+				})
+		{
+			@Override
+			protected Map<String, String> getParams() throws AuthFailureError {
+				Map<String, String> params = new HashMap<>();
+				params.put("email", email);
+				params.put("password", password);
+				return params;
+			}
+		};
+
+		RequestQueue requestQueue = Volley.newRequestQueue(this);
+		requestQueue.add(stringRequest);
+*/
+	}
+
 
 	private boolean validatePassword(String pass) {
 

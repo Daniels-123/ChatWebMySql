@@ -82,7 +82,7 @@ public class ConversacionActivity extends AppCompatActivity  implements Emojicon
 		linearhorizontal = findViewById(R.id.linearhorizontal);
 		scrollView = findViewById(R.id.scroll);
 
-		mEditText.addTextChangedListener(new TextWatcher() {
+	/*	mEditText.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -97,7 +97,7 @@ public class ConversacionActivity extends AppCompatActivity  implements Emojicon
 			public void afterTextChanged(Editable s) {
 
 			}
-		});
+		});*/
 
 
 		button.setOnClickListener(new View.OnClickListener() {
@@ -176,7 +176,7 @@ public class ConversacionActivity extends AppCompatActivity  implements Emojicon
 
 
 	private void ObtenerDatos() {
-		String url = "http://192.168.0.13/webdyb/loginapp/obtenerMensajes.php";
+		String url = "http://192.168.0.11/webdyb/loginapp/obtenerMensajes.php";
 //		final ProgressDialog progressDialog = new ProgressDialog(ConversacionActivity.this);
 	//	progressDialog.setMessage("Cargando...");
 	//	progressDialog.show();
@@ -195,9 +195,10 @@ public class ConversacionActivity extends AppCompatActivity  implements Emojicon
 								String nombreusuario = hit.getString("NOMBRE_USUARIO");
 								String nombregrupo = hit.getString("NOMBRE_GRUPO");
 								String enviado = hit.getString("ENVIADO");
+								String tipo = hit.getString("TIPO_MENSAJE");
 
 
-								mItemMensajes.add(new Mensaje(mensaje, nombreusuario, nombregrupo, enviado));
+								mItemMensajes.add(new Mensaje(mensaje, nombreusuario, nombregrupo, enviado, tipo));
 							}
 							mAdaptadorMensajes = new AdaptadorMensajes(ConversacionActivity.this,mItemMensajes);
 							recyclergrupos.setAdapter(mAdaptadorMensajes);
@@ -241,7 +242,7 @@ public class ConversacionActivity extends AppCompatActivity  implements Emojicon
 
 	    //String mensaje = etTexto.getText().toString();
         //   final String mensajeservidor = StringEscapeUtils.escapeJava(mensaje);
-		StringRequest stringRequest = new StringRequest(Request.Method.POST, getResources().getString(R.string.URL_ENVIAR_MENSAJE),
+		StringRequest stringRequest = new StringRequest(Request.Method.POST, getResources().getString(R.string.URL_SERVER),
 				new Response.Listener<String>() {
 
 					@Override
