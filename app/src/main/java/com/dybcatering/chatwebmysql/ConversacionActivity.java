@@ -1,25 +1,17 @@
 package com.dybcatering.chatwebmysql;
 
 import androidx.appcompat.app.AppCompatActivity;
-//import androidx.emoji.bundled.BundledEmojiCompatConfig;
-//import androidx.emoji.text.EmojiCompat;
-//import androidx.emoji.widget.EmojiEditText;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -29,18 +21,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.dybcatering.chatwebmysql.AdaptadorGrupos.AdaptadorGrupo;
-import com.dybcatering.chatwebmysql.AdaptadorGrupos.ItemGrupo;
 import com.dybcatering.chatwebmysql.AdaptadorMensajes.AdaptadorMensajes;
 import com.dybcatering.chatwebmysql.AdaptadorMensajes.Mensaje;
+import com.dybcatering.chatwebmysql.Conversacion.ConversacionLive4T;
 import com.dybcatering.chatwebmysql.usersession.UserSession;
-import com.rockerhieu.emojicon.EmojiconEditText;
-import com.rockerhieu.emojicon.EmojiconGridFragment;
-import com.rockerhieu.emojicon.EmojiconTextView;
-import com.rockerhieu.emojicon.EmojiconsFragment;
-import com.rockerhieu.emojicon.emoji.Emojicon;
 
-//import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,181 +34,112 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Timer;
-import java.util.TimerTask;
 
-public class ConversacionActivity extends AppCompatActivity  implements EmojiconGridFragment.OnEmojiconClickedListener,
-		EmojiconsFragment.OnEmojiconBackspaceClickedListener, AdaptadorMensajes.OnItemClickListener {
+import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
+import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
 
-	RecyclerView recyclergrupos;
-	UserSession sessionManager;
-	private AdaptadorMensajes mAdaptadorMensajes;
-	private ArrayList<Object> mItemMensajes;
-	private RequestQueue mRequestQueue;
-	final Handler handler = new Handler();
-	Timer timer = new Timer();
-	//EmojiEditText etTexto;
-	Button btEnviar;
-	LinearLayout linearhorizontal;
-	ScrollView scrollView;
-	EmojiconEditText mEditText;
-	EmojiconTextView mTextView;
-	Button button;
+public class ConversacionActivity extends AppCompatActivity implements AdaptadorMensajes.OnItemClickListener {
+
+    RecyclerView recyclergrupos;
+    UserSession sessionManager;
+    private AdaptadorMensajes mAdaptadorMensajes;
+    private ArrayList<Object> mItemMensajes;
+    private RequestQueue mRequestQueue;
+    final Handler handler = new Handler();
+    Timer timer = new Timer();
+    //EmojiEditText etTexto;
+    Button btEnviar;
+    LinearLayout linearhorizontal;
+
+    private ImageView ButtonEmoji;
+    private Button btnEnviarMensaje;
+    private EmojiconEditText edMessage;
+    private View contentRoot;
+    private LinearLayoutManager mLinearLayoutManager;
+
 
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	//	EmojiCompat.Config config = new BundledEmojiCompatConfig(this)
-	//			.setReplaceAll(true);
-	//	EmojiCompat.init(config);
-		setContentView(R.layout.activity_conversacion);
-
-		mEditText = findViewById(R.id.editEmojicon);
-		button = findViewById(R.id.abriremojis);
-		linearhorizontal = findViewById(R.id.linearhorizontal);
-		scrollView = findViewById(R.id.scroll);
-
-	/*	mEditText.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				mTextView.setText(s);
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-
-			}
-		});*/
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_conversacion);
 
 
-		button.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				linearhorizontal.setVisibility(View.GONE);
-				setEmojiconFragment(false);
+        contentRoot = findViewById(R.id.contentRoot);
+        edMessage = findViewById(R.id.textimput);
+        ButtonEmoji = findViewById(R.id.emojiimage);
+        btnEnviarMensaje = findViewById(R.id.btnEnviar);
+        btnEnviarMensaje.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                enviarMensaje(edMessage.getText().toString());
+            }
+        });
 
-			}
-		});
+        EmojIconActions emojIcon = new EmojIconActions(this, contentRoot, edMessage, ButtonEmoji);
+        emojIcon.ShowEmojIcon();
 
-
-
-	//	etTexto = findViewById(R.id.etTexto);
-		recyclergrupos = findViewById(R.id.rvMensajes);
+        recyclergrupos = findViewById(R.id.messageRecyclerView);
         recyclergrupos.setLayoutManager(new GridLayoutManager(getApplicationContext(), 1));
-		mItemMensajes = new ArrayList<>();
+        mItemMensajes = new ArrayList<>();
 
-		mRequestQueue = Volley.newRequestQueue(ConversacionActivity.this);
-
-		//btEnviar = findViewById(R.id.btnEnviar);
-	/*	TimerTask task = new TimerTask() {
-			@Override
-			public void run() {
-				handler.post(new Runnable() {
-					public void run() {
-						try {
-							//Ejecuta tu AsyncTask!
-							AsyncTask myTask = new AsyncTask() {
-								@Override
-								protected Object doInBackground(Object[] objects) {
-									return null;
-								}
-							};
-							ObtenerDatos();
-							myTask.execute();
-						} catch (Exception e) {
-							Log.e("error", e.getMessage());
-						}
-					}
-				});
-			}
-		};
-
-		timer.schedule(task, 0, 3000);*/
-		ObtenerDatos();
-
-//		btEnviar.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-	//			if(etTexto.getText().toString().isEmpty()) {
-//					Toast.makeText(ConversacionActivity.this, "Se te olvido escribir el mensaje.", Toast.LENGTH_LONG).show();
-	//			} else {
-//					enviarMensaje();
-				//	ObtenerDatos();
-	//			}
-//			}
-//		});
-
-//		btEnviar.setOnLongClickListener(new View.OnLongClickListener() {
-//			@Override
-//			public boolean onLongClick(View v) {
-//				Toast.makeText(ConversacionActivity.this, "el texto es hola", Toast.LENGTH_SHORT).show();
-//				GrabarVoz();
-//
-//				return true;
-//			}
-//		});
-
-	}
+        mRequestQueue = Volley.newRequestQueue(ConversacionActivity.this);
+        mLinearLayoutManager = new LinearLayoutManager(this);
+        mLinearLayoutManager.setStackFromEnd(true);
+        ObtenerDatos();
 
 
-
-	private void GrabarVoz() {
-	}
+    }
 
 
-	private void ObtenerDatos() {
-		String url = "http://192.168.0.11/webdyb/loginapp/obtenerMensajes.php";
+    private void ObtenerDatos() {
+        String url = "http://192.168.0.13/webdyb/loginapp/obtenerMensajes.php";
 //		final ProgressDialog progressDialog = new ProgressDialog(ConversacionActivity.this);
-	//	progressDialog.setMessage("Cargando...");
-	//	progressDialog.show();
+        //	progressDialog.setMessage("Cargando...");
+        //	progressDialog.show();
 //		progressDialog.setCancelable(false);
-		StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-				new Response.Listener<String>() {
-					@Override
-					public void onResponse(String response) {
-						//progressDialog.dismiss();
-						try {
-							JSONObject jsonObject = new JSONObject(response);
-							JSONArray jsonArray = jsonObject.getJSONArray("Mensajes");
-							for (int i = 0; i < jsonArray.length(); i++) {
-								JSONObject hit = jsonArray.getJSONObject(i);
-								String mensaje = hit.getString("MENSAJE");
-								String nombreusuario = hit.getString("NOMBRE_USUARIO");
-								String nombregrupo = hit.getString("NOMBRE_GRUPO");
-								String enviado = hit.getString("ENVIADO");
-								String tipo = hit.getString("TIPO_MENSAJE");
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        //progressDialog.dismiss();
+                        try {
+                            JSONObject jsonObject = new JSONObject(response);
+                            JSONArray jsonArray = jsonObject.getJSONArray("Mensajes");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject hit = jsonArray.getJSONObject(i);
+                                String mensaje = hit.getString("MENSAJE");
+                                String nombreusuario = hit.getString("NOMBRE_USUARIO");
+                                String nombregrupo = hit.getString("NOMBRE_GRUPO");
+                                String enviado = hit.getString("ENVIADO");
+                                String tipo = hit.getString("TIPO_MENSAJE");
 
 
-								mItemMensajes.add(new Mensaje(mensaje, nombreusuario, nombregrupo, enviado, tipo));
-							}
-							mAdaptadorMensajes = new AdaptadorMensajes(ConversacionActivity.this,mItemMensajes);
-							recyclergrupos.setAdapter(mAdaptadorMensajes);
+                                mItemMensajes.add(new Mensaje(mensaje, nombreusuario, nombregrupo, enviado, tipo));
+                            }
+                            mAdaptadorMensajes = new AdaptadorMensajes(ConversacionActivity.this,mItemMensajes);
+                            recyclergrupos.setAdapter(mAdaptadorMensajes);
 
-							mAdaptadorMensajes.setOnClickItemListener(ConversacionActivity.this);
+                            mAdaptadorMensajes.setOnClickItemListener(ConversacionActivity.this);
 
-						} catch (JSONException e) {
-							e.printStackTrace();
-						//	progressDialog.dismiss();
-							Toast toast= Toast.makeText(ConversacionActivity.this,
-									"Parece que algo salió mal o aun no has agregado cursos", Toast.LENGTH_SHORT);
-							toast.setGravity(Gravity.CENTER_HORIZONTAL| Gravity.CENTER_HORIZONTAL, 0, 0);
-							toast.show();
-							//Toasty toasty = Toasty.error(getContext(), "Parece que algo salió mal o aun no has agregado cursos", Toast.LENGTH_SHORT).show();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            //	progressDialog.dismiss();
+                            Toast toast= Toast.makeText(ConversacionActivity.this,
+                                    "Parece que algo salió mal o aun no has agregado cursos", Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.CENTER_HORIZONTAL| Gravity.CENTER_HORIZONTAL, 0, 0);
+                            toast.show();
+                            //Toasty toasty = Toasty.error(getContext(), "Parece que algo salió mal o aun no has agregado cursos", Toast.LENGTH_SHORT).show();
 
-						}
-					}
-				}, new Response.ErrorListener() {
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				error.printStackTrace();
-			//	progressDialog.dismiss();
-				Toast.makeText(ConversacionActivity.this, "error de bd", Toast.LENGTH_SHORT).show();
-			}
-		}) ;
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+                //	progressDialog.dismiss();
+                Toast.makeText(ConversacionActivity.this, "error de bd", Toast.LENGTH_SHORT).show();
+            }
+        }) ;
 		/* {
 			@Override
 			protected Map<String, String > getParams(){
@@ -233,74 +149,56 @@ public class ConversacionActivity extends AppCompatActivity  implements Emojicon
 			}
 		};*/
 
-		RequestQueue requestQueue = Volley.newRequestQueue(ConversacionActivity.this);
-		requestQueue.add(stringRequest);
-	}
+        RequestQueue requestQueue = Volley.newRequestQueue(ConversacionActivity.this);
+        requestQueue.add(stringRequest);
+    }
 
 
-	public void enviarMensaje() {
+    public void enviarMensaje(final String s) {
 
-	    //String mensaje = etTexto.getText().toString();
+        //String mensaje = etTexto.getText().toString();
         //   final String mensajeservidor = StringEscapeUtils.escapeJava(mensaje);
-		StringRequest stringRequest = new StringRequest(Request.Method.POST, getResources().getString(R.string.URL_SERVER),
-				new Response.Listener<String>() {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, getResources().getString(R.string.URL_SERVER),
+                new Response.Listener<String>() {
 
-					@Override
-					public void onResponse(String response) {
-						// En este apartado se programa lo que deseamos hacer en caso de no haber errores
-						Toast.makeText(ConversacionActivity.this, response, Toast.LENGTH_LONG).show();
-						ObtenerDatos();
-	//					etTexto.setText("");
-					}
-				}, new Response.ErrorListener() {
-			@Override
-			public void onErrorResponse(VolleyError error) {
-				// En caso de tener algun error en la obtencion de los datos
-				Toast.makeText(ConversacionActivity.this, "ERROR EN LA CONEXIÓN", Toast.LENGTH_LONG).show();
-			}
-		}){
-			@Override
-			protected Map<String, String> getParams() throws AuthFailureError {
+                    @Override
+                    public void onResponse(String response) {
+                        // En este apartado se programa lo que deseamos hacer en caso de no haber errores
+                       edMessage.setText("");
+                       mItemMensajes.clear();
+                       ObtenerDatos();
 
-				// En este metodo se hace el envio de valores de la aplicacion al servidor
+                        recyclergrupos.scrollToPosition(mItemMensajes.size()-1);
+                        Toast.makeText(ConversacionActivity.this, response, Toast.LENGTH_LONG).show();
+                        //					etTexto.setText("");
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // En caso de tener algun error en la obtencion de los datos
+                Toast.makeText(ConversacionActivity.this, "ERROR EN LA CONEXIÓN"+ error.toString(), Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
 
-				Map<String, String> parametros = new Hashtable<String, String>();
-				parametros.put("usuario", "3");//usuario.getUsuario());
-				parametros.put("grupo", "2");// usuarioDestino.getUsuario());
+                // En este metodo se hace el envio de valores de la aplicacion al servidor
 
-      //          parametros.put("mensaje", etTexto.getText().toString());
+                Map<String, String> parametros = new Hashtable<String, String>();
+                parametros.put("usuario", "3");//usuario.getUsuario());
+                parametros.put("grupo", "2");// usuarioDestino.getUsuario());
+
+                parametros.put("mensaje", s);
                 return parametros;
-			}
-		};
+            }
+        };
 
-		RequestQueue requestQueue = Volley.newRequestQueue(this);
-		requestQueue.add(stringRequest);
-	}
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
 
+    @Override
+    public void onItemClick(int position) {
 
-	private void setEmojiconFragment(boolean useSystemDefault) {
-
-
-		getSupportFragmentManager()
-				.beginTransaction()
-				.replace(R.id.emojicons, EmojiconsFragment.newInstance(useSystemDefault))
-				.commit();
-
-	}
-
-
-	@Override
-	public void onItemClick(int position) {
-
-	}
-
-	@Override
-	public void onEmojiconClicked(Emojicon emojicon) {
-		EmojiconsFragment.input(mEditText, emojicon);
-	}
-
-	@Override
-	public void onEmojiconBackspaceClicked(View v) {
-		EmojiconsFragment.backspace(mEditText);
-	}
+    }
 }

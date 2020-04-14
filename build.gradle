@@ -10,7 +10,8 @@ buildscript {
         }
         mavenCentral()
         google()
-        
+        maven { url "https://dl.bintray.com/hani-momanii/maven"}
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.2'
@@ -31,7 +32,8 @@ allprojects {
         }
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url 'https://jitpack.io' }
-        
+        maven { url "https://dl.bintray.com/hani-momanii/maven"}
+
     }
 }
 

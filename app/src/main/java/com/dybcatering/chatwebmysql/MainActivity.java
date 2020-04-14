@@ -19,6 +19,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.dybcatering.chatwebmysql.AdaptadorGrupos.AdaptadorGrupo;
 import com.dybcatering.chatwebmysql.AdaptadorGrupos.ItemGrupo;
+import com.dybcatering.chatwebmysql.Conversacion.ConversacionLive4T;
 import com.dybcatering.chatwebmysql.CrearGrupo.CrearGrupoActivity;
 import com.dybcatering.chatwebmysql.usersession.UserSession;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements AdaptadorGrupo.On
 
 	private void ObtenerDatos() {
 
-		String url = "http://192.168.0.11/webdyb/loginapp/listargrupos.php";
+		String url = "http://192.168.0.13/webdyb/loginapp/listargrupos.php";
 		final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
 		progressDialog.setMessage("Cargando...");
 		progressDialog.show();

@@ -7,50 +7,128 @@
     android:layout_margin="8dp"
     app:cardCornerRadius="8dp">
 
-    <LinearLayout
+    <!--LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <LinearLayout
+            android:layout_width="190dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:weightSum="10">
+
+
+            <TextView
+                android:id="@+id/usuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:text="Usuario"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/mensaje"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+
+                android:gravity="center_vertical"
+                android:text="Mensaje"
+
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:visibility="invisible" />
+
+            <TextView
+                android:id="@+id/fechahora"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="FechaHora" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+
+            android:layout_gravity="right"
+            android:layout_weight="3"
+            android:gravity="right"
+            >
+
+            <Button
+                android:id="@+id/button3"
+                android:layout_width="1dp"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:background="@drawable/perfil"
+                 />
+
+        </LinearLayout>
+
+
+    </LinearLayout-->
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:background="#fff"
+        android:elevation="4dp"
+        android:padding="16dp">
 
-
-        <TextView
-            android:id="@+id/usuario"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Usuario"
-            android:textSize="22sp"
-            android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/cardview_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="18dp"
+            android:src="@drawable/perfil" />
 
         <TextView
             android:id="@+id/mensaje"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/cardview_image"
+            android:paddingBottom="5dp"
+            android:text="Viral Android"
+            android:textSize="24sp" />
 
-            android:gravity="center_vertical"
-            android:text="Mensaje"
-
-            android:textSize="16sp"
-            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/usuario"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/mensaje"
+            android:layout_toRightOf="@+id/cardview_image"
+            android:text="Free android tutorials and examples for beginners and expert."
+            android:textColor="#8b8b8b" />
 
         <TextView
             android:id="@+id/fechahora"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="FechaHora" />
+            android:layout_below="@+id/usuario"
+            android:layout_toRightOf="@+id/cardview_image"
+            android:text="Free android tutorials and examples for beginners and expert."
+            android:textColor="#8b8b8b" />
 
         <ImageView
+            android:layout_below="@+id/fechahora"
             android:id="@+id/imageView"
             android:layout_width="match_parent"
             android:layout_height="300dp"
-            android:layout_weight="1"
-            app:srcCompat="@drawable/email"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
 
+    </RelativeLayout>
 
-    </LinearLayout>
 
 </androidx.cardview.widget.CardView>
 
