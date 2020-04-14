@@ -56,7 +56,7 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 	public void onBindViewHolder(@NonNull GrupoViewHolder holder, int position) {
 		Mensaje mismoitem = (Mensaje) mExampleList.get(position);
 
-		String mensaje =mismoitem.getMensajeEnviado();
+		String mensaje = mismoitem.getMensajeEnviado();
 		String usuario = mismoitem.getUsuario();
 		String grupo = mismoitem.getGrupo();
 		String horaenviado = mismoitem.getEnviado();
@@ -64,42 +64,88 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 		Date currentTime = Calendar.getInstance().getTime();
 
 
-		if (tipomensaje.equals("2")) {
+		switch (tipomensaje) {
+
+			case "4":
+				holder.mImagen.setVisibility(View.VISIBLE);
+				holder.mMensaje.setVisibility(View.GONE);
+				Picasso.with(mContext).load("http://i.imgur.com/DvpvklR.png").fit().centerCrop()
+						.into(holder.mImagen);
+
+				break;
+
+			case "2":
+
+
+
+			case "1":
+				if (mismoitem.getUsuario().equals("Daniel")) {
+					holder.mImagen.setVisibility(View.GONE);
+					holder.mMensaje.setVisibility(View.VISIBLE);
+
+					holder.mNombreUsuario.setGravity(Gravity.RIGHT);
+					holder.mMensaje.setGravity(Gravity.RIGHT);
+					holder.mFecha.setGravity(Gravity.RIGHT);
+					holder.mFecha.setTextColor(Color.BLUE);
+					holder.mNombreUsuario.setText(usuario);
+					holder.mMensaje.setText(mensaje);
+					holder.mFecha.setText(horaenviado);
+				} else {
+					holder.mNombreUsuario.setGravity(Gravity.LEFT);
+					holder.mMensaje.setGravity(Gravity.LEFT);
+					holder.mFecha.setGravity(Gravity.LEFT);
+					holder.mFecha.setTextColor(Color.RED);
+					holder.mNombreUsuario.setText(usuario);
+					holder.mMensaje.setText(mensaje);
+					holder.mFecha.setText(horaenviado);
+
+				}
+				break;
+
+		}
+
+
+		/*
+		if (tipomensaje.equals("4")) {
 			holder.mImagen.setVisibility(View.VISIBLE);
 			holder.mMensaje.setVisibility(View.GONE);
 			Picasso.with(mContext).load("http://i.imgur.com/DvpvklR.png").fit().centerCrop()
 					.into(holder.mImagen);
 
 //			Picasso.with((android.content.Context) Context).load("http://i.imgur.com/DvpvklR.png").into(holder.mImagen);
-		}else if(mismoitem.getUsuario().equals("Daniel")) {
-			holder.mImagen.setVisibility(View.GONE);
-			holder.mMensaje.setVisibility(View.VISIBLE);
+		}else if (tipomensaje.equals("")) {
+		} else if(tipomensaje.equals("1") && mismoitem.getUsuario().equals("Daniel")) {
+				holder.mImagen.setVisibility(View.GONE);
+				holder.mMensaje.setVisibility(View.VISIBLE);
 
-			holder.mNombreUsuario.setGravity(Gravity.RIGHT);
-			holder.mMensaje.setGravity(Gravity.RIGHT);
-			holder.mFecha.setGravity(Gravity.RIGHT);
-			holder.mFecha.setTextColor(Color.BLUE);
-			holder.mNombreUsuario.setText(usuario);
-			holder.mMensaje.setText(mensaje);
-			holder.mFecha.setText(horaenviado);
-			//holder.tvNombreUsuario.setText(listaMensajes.get(i).getUsuarioOrigen());
-			//holder.tvMensaje.setText(listaMensajes.get(i).getMensaje());
-		} else {
-			holder.mNombreUsuario.setGravity(Gravity.LEFT);
-			holder.mMensaje.setGravity(Gravity.LEFT);
-			holder.mFecha.setGravity(Gravity.LEFT);
-			holder.mFecha.setTextColor(Color.RED);
-			holder.mNombreUsuario.setText(usuario);
-			holder.mMensaje.setText(mensaje);
-			holder.mFecha.setText(horaenviado);
-			//holder.tvNombreUsuario.setText(listaMensajes.get(i).getUsuarioOrigen());
-			//holder.tvMensaje.setText(listaMensajes.get(i).getMensaje());
+				holder.mNombreUsuario.setGravity(Gravity.RIGHT);
+				holder.mMensaje.setGravity(Gravity.RIGHT);
+				holder.mFecha.setGravity(Gravity.RIGHT);
+				holder.mFecha.setTextColor(Color.BLUE);
+				holder.mNombreUsuario.setText(usuario);
+				holder.mMensaje.setText(mensaje);
+				holder.mFecha.setText(horaenviado);
+				//holder.tvNombreUsuario.setText(listaMensajes.get(i).getUsuarioOrigen());
+				//holder.tvMensaje.setText(listaMensajes.get(i).getMensaje());
+			} else if (tipomensaje.equals()){
+				holder.mNombreUsuario.setGravity(Gravity.LEFT);
+				holder.mMensaje.setGravity(Gravity.LEFT);
+				holder.mFecha.setGravity(Gravity.LEFT);
+				holder.mFecha.setTextColor(Color.RED);
+				holder.mNombreUsuario.setText(usuario);
+				holder.mMensaje.setText(mensaje);
+				holder.mFecha.setText(horaenviado);
+				//holder.tvNombreUsuario.setText(listaMensajes.get(i).getUsuarioOrigen());
+				//holder.tvMensaje.setText(listaMensajes.get(i).getMensaje());
+			}
 		}
 
 		/*holder.mNombreUsuario.setText(usuario);
 		holder.mMensaje.setText(mensaje);
 		holder.mFecha.setText(horaenviado);
 */
+
+
 
 
 
@@ -117,7 +163,7 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 	public class GrupoViewHolder extends RecyclerView.ViewHolder {
 
 
-		public TextView mNombreUsuario, mMensaje, mFecha;
+		public TextView mNombreUsuario, mMensaje, mFecha, mDocumento;
 		public ImageView mImagen;
 
 
@@ -127,6 +173,7 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 			mMensaje = itemView.findViewById(R.id.mensaje);
 			mFecha = itemView.findViewById(R.id.fechahora);
 			mImagen = itemView.findViewById(R.id.imageView);
+			mDocumento = itemView.findViewById(R.id.documento);
 
 			//mTextViewCreator = itemView.findViewById(R.id.text_view_creator);
 			//mTextViewDescription = itemView.findViewById(R.id.text_view_description);

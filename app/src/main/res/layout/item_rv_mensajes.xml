@@ -127,6 +127,15 @@
             android:layout_height="300dp"
             android:visibility="invisible" />
 
+        <TextView
+            android:id="@+id/documento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/cardview_image"
+            android:visibility="visible"
+            android:layout_below="@id/fechahora"
+            />
+
     </RelativeLayout>
 
 

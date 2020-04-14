@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1000420823093",
+    "firebase_url": "https://liv4t-b63e7.firebaseio.com",
+    "project_id": "liv4t-b63e7",
+    "storage_bucket": "liv4t-b63e7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1000420823093:android:fc9c03d021b40c7328617c",
+        "android_client_info": {
+          "package_name": "com.dybcatering.chatwebmysql"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1000420823093-eiltaoni4v665kcgjmhlk7ksvktrqcmn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBN4FstgYyu0UGFUyoUGftyr3jWxBO8JZI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1000420823093-eiltaoni4v665kcgjmhlk7ksvktrqcmn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
