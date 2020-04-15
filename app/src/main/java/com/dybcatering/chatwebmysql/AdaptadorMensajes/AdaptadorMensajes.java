@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -74,7 +75,19 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 
 				break;
 
+			case "3":
+				holder.mDocumentoWord.setVisibility(View.VISIBLE);
+				holder.mMensaje.setVisibility(View.GONE);
+				holder.mNombreDoc.setText("Archivo Word");
+
+				break;
 			case "2":
+				holder.mDocumentoPDF.setVisibility(View.VISIBLE);
+				holder.mMensaje.setVisibility(View.GONE);
+				holder.mNombrePdf.setText("Documento PDF");
+
+
+				break;
 
 
 
@@ -163,18 +176,20 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 	public class GrupoViewHolder extends RecyclerView.ViewHolder {
 
 
-		public TextView mNombreUsuario, mMensaje, mFecha, mDocumento;
+		public TextView mNombreUsuario, mMensaje, mFecha, mNombreDoc, mNombrePdf;
 		public ImageView mImagen;
-
+		private LinearLayout mDocumentoWord, mDocumentoPDF;
 
 		public GrupoViewHolder(View itemView) {
 			super(itemView);
 			mNombreUsuario= itemView.findViewById(R.id.usuario);
-			mMensaje = itemView.findViewById(R.id.mensaje);
+			mMensaje = itemView.findViewById(R.id.mensajetexto);
 			mFecha = itemView.findViewById(R.id.fechahora);
 			mImagen = itemView.findViewById(R.id.imageView);
-			mDocumento = itemView.findViewById(R.id.documento);
-
+			mDocumentoWord = itemView.findViewById(R.id.documentoword);
+			mNombreDoc = itemView.findViewById(R.id.nombredoc);
+			mDocumentoPDF = itemView.findViewById(R.id.documentopdf);
+			mNombrePdf = itemView.findViewById(R.id.nombrepdf);
 			//mTextViewCreator = itemView.findViewById(R.id.text_view_creator);
 			//mTextViewDescription = itemView.findViewById(R.id.text_view_description);
 			//mBarrio = itemView.findViewById(R.id.text_barrio);

@@ -363,9 +363,83 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
     public void onItemClick(int position) {
         Mensaje mismoitem = (Mensaje) mItemMensajes.get(position);
 
-        if (mismoitem.getTipoMensaje().equals("1")){
-            Toast.makeText(this, "1", Toast.LENGTH_SHORT).show();
-        }else{
+        String tipo = mismoitem.getTipoMensaje();
+
+        switch (tipo){
+
+            case "1":
+                Toast.makeText(this, "mensaje es" + mismoitem.getMensajeEnviado(), Toast.LENGTH_SHORT).show();
+
+            break;
+
+            case "2":
+                String url3 = mismoitem.getMensajeEnviado();
+                DownloadManager.Request request3 = new DownloadManager.Request(Uri.parse(url3));
+
+                request3.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI |
+                        DownloadManager.Request.NETWORK_MOBILE);
+                request3.setTitle(("Documento PDF")+System.currentTimeMillis());
+                request3.setDescription("Descargando archivo del servidor");
+
+                request3.allowScanningByMediaScanner();
+                request3.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request3.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, ""+ System.currentTimeMillis());
+
+                DownloadManager manager3 = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+                manager3.enqueue(request3);
+
+            break;
+
+            case "3":
+                String url = mismoitem.getMensajeEnviado();
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+
+                request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI |
+                        DownloadManager.Request.NETWORK_MOBILE);
+                request.setTitle(("Documento Word")+System.currentTimeMillis());
+                request.setDescription("Descargando archivo del servidor");
+
+                request.allowScanningByMediaScanner();
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, ""+ System.currentTimeMillis());
+
+                DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+                manager.enqueue(request);
+                break;
+
+            case "4":
+                String url2 = mismoitem.getMensajeEnviado();
+                DownloadManager.Request request2 = new DownloadManager.Request(Uri.parse(url2));
+
+                request2.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI |
+                        DownloadManager.Request.NETWORK_MOBILE);
+                request2.setTitle(("Descarga Liv4T")+System.currentTimeMillis());
+                request2.setDescription("Descargando documento word del servidor");
+
+                request2.allowScanningByMediaScanner();
+                request2.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                request2.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, ""+ System.currentTimeMillis());
+
+                DownloadManager manager2 = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+                manager2.enqueue(request2);
+
+
+            break;
+
+            case "5":
+
+
+            break;
+
+            default:
+                Toast.makeText(this, "Mensaje de Chat", Toast.LENGTH_SHORT).show();
+
+        }
+
+/*
+     //   if (mismoitem.getTipoMensaje().equals("1")){
+       //     Toast.makeText(this, "1", Toast.LENGTH_SHORT).show();
+       // }else{
             String url = mismoitem.getMensajeEnviado();
             DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
 
@@ -382,7 +456,7 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
             manager.enqueue(request);
 
             Toast.makeText(this, "eurkea", Toast.LENGTH_SHORT).show();
-        }
+        //}/*/
     }
 
     private void startDownload() {
