@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="lecture_voice__margin_card">9dp</dimen>
+    <dimen name="lecture_voice_icon">40dp</dimen>
+    <dimen name="grid_annotation_margin">40dp</dimen>
+    <dimen name="lecture_voice_text_duration_margin_right">30dp</dimen>
+</resources>

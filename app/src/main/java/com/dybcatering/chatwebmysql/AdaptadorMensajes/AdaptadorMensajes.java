@@ -1,14 +1,23 @@
 package com.dybcatering.chatwebmysql.AdaptadorMensajes;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.os.AsyncTask;
+import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,12 +26,14 @@ import com.dybcatering.chatwebmysql.AdaptadorGrupos.ItemGrupo;
 import com.dybcatering.chatwebmysql.R;
 import com.squareup.picasso.Picasso;
 
+import java.sql.Time;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 
 public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.GrupoViewHolder> {
@@ -33,7 +44,6 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 	private Object Context;
 	//public static SimpleDateFormat sdfResult = new SimpleDateFormat("HH:mm:ss", Locale.US);
 	//public static SimpleDateFormat sdfResultMinutos = new SimpleDateFormat("m", Locale.US);
-
 
 
 	public AdaptadorMensajes(Context context, ArrayList<Object> exampleList) {
@@ -66,6 +76,13 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 
 
 		switch (tipomensaje) {
+
+			case "5":
+
+				holder.mAudio.setVisibility(View.VISIBLE);
+				holder.mMensaje.setVisibility(View.GONE);
+
+				break;
 
 			case "4":
 				holder.mImagen.setVisibility(View.VISIBLE);
@@ -173,12 +190,24 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 		void onItemClick(int position);
 	}
 
-	public class GrupoViewHolder extends RecyclerView.ViewHolder {
+	public class GrupoViewHolder extends RecyclerView.ViewHolder  implements MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnCompletionListener {
 
 
 		public TextView mNombreUsuario, mMensaje, mFecha, mNombreDoc, mNombrePdf;
 		public ImageView mImagen;
 		private LinearLayout mDocumentoWord, mDocumentoPDF;
+		private RelativeLayout mAudio;
+		//integracion archivo de audio en card
+		private ImageButton btn_play_pause;
+		private SeekBar seekBar;
+		private TextView textView;
+
+		private MediaPlayer mediaPlayer;
+		private int mediaFileLength;
+		private int realtimeLengh;
+		final Handler handler = new Handler();
+
+
 
 		public GrupoViewHolder(View itemView) {
 			super(itemView);
@@ -190,10 +219,87 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 			mNombreDoc = itemView.findViewById(R.id.nombredoc);
 			mDocumentoPDF = itemView.findViewById(R.id.documentopdf);
 			mNombrePdf = itemView.findViewById(R.id.nombrepdf);
+			mAudio = itemView.findViewById(R.id.relativeaudio);
 			//mTextViewCreator = itemView.findViewById(R.id.text_view_creator);
 			//mTextViewDescription = itemView.findViewById(R.id.text_view_description);
 			//mBarrio = itemView.findViewById(R.id.text_barrio);
 			//mVistas = itemView.findViewById(R.id.text_view_vistas);
+
+			seekBar = itemView.findViewById(R.id.seekbar);
+			textView = itemView.findViewById(R.id.texttimer);
+
+			seekBar.setMax(99);
+			seekBar.setOnTouchListener(new View.OnTouchListener() {
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					if (mediaPlayer.isPlaying()){
+						SeekBar seekBar = (SeekBar)v;
+						int playPosition = (mediaFileLength/100)*seekBar.getProgress();
+						mediaPlayer.seekTo(playPosition);
+
+					}
+					return false;
+				}
+			});
+			btn_play_pause = itemView.findViewById(R.id.btn_play_pause);
+
+			btn_play_pause.setOnClickListener(new View.OnClickListener() {
+
+
+				@Override
+				public void onClick(View v) {
+
+					//final ProgressDialog mDialog = new ProgressDialog(mContext.getApplicationContext());
+
+					AsyncTask<String, String, String> mp3Play = new AsyncTask<String, String, String>() {
+						@Override
+						protected void onPreExecute() {
+							super.onPreExecute();
+							Toast.makeText(mContext.getApplicationContext(), "por favor espere", Toast.LENGTH_SHORT).show();
+							//		mDialog.setMessage("Por favor espere un momento");
+							//mDialog.show();
+						}
+
+						@Override
+						protected String doInBackground(String... strings) {
+							try {
+								mediaPlayer.setDataSource(strings[0]);
+								mediaPlayer.prepare();
+							}
+							catch (Exception ex){
+
+							}
+							return  "";
+
+
+
+						}
+
+						@Override
+						protected void onPostExecute(String s) {
+							mediaFileLength = mediaPlayer.getDuration();
+							realtimeLengh = mediaFileLength;
+							if (!mediaPlayer.isPlaying()){
+								mediaPlayer.start();
+								btn_play_pause.setImageResource(R.drawable.ic_stop);
+							}else{
+								mediaPlayer.pause();
+								btn_play_pause.setImageResource(R.drawable.ic_play);
+							}
+
+							updateSeekBar();
+//							mDialog.dismiss();
+						}
+
+					};
+					mp3Play.execute("https://firebasestorage.googleapis.com/v0/b/diarios-2a7fd.appspot.com/o/Subidas%2FSubidas_1586847089260_alt%3Dmedia%26token%3D3bd4f03b-77e3-4957-88c2-6d0dafccea18.mp3%20(online-audio-converter.com).mp3?alt=media&token=acf83f0b-5fcc-472c-94a0-bb5e4fabbc12");
+
+				}
+			});
+
+			mediaPlayer = new MediaPlayer();
+			mediaPlayer.setOnBufferingUpdateListener(this);
+			mediaPlayer.setOnCompletionListener(this);
 
 			itemView.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -207,7 +313,36 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 				}
 			});
 		}
+		private void updateSeekBar() {
+			seekBar.setProgress((int) (((float)mediaPlayer.getCurrentPosition() / mediaFileLength)*100));
+			if (mediaPlayer.isPlaying()){
+				Runnable updater = new Runnable() {
+					@Override
+					public void run() {
+						updateSeekBar();
+						realtimeLengh-=1000;
+						textView.setText(String.format("%d:%d", TimeUnit.MILLISECONDS.toMinutes(realtimeLengh),
+								TimeUnit.MILLISECONDS.toSeconds(realtimeLengh) -
+								TimeUnit.MILLISECONDS.toSeconds(TimeUnit.MILLISECONDS.toMinutes(realtimeLengh))));
+					}
+				};
+				handler.postDelayed(updater, 1000);
+			}
+		}
+
+		@Override
+		public void onBufferingUpdate(MediaPlayer mp, int percent) {
+				seekBar.setSecondaryProgress(percent);
+		}
+
+		@Override
+		public void onCompletion(MediaPlayer mp) {
+			btn_play_pause.setImageResource(R.drawable.ic_play);
+
+
+		}
 	}
+
 
 
 

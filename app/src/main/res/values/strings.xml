@@ -33,5 +33,7 @@
     <string name="URL_SERVER">http://192.168.0.13/webdyb/loginapp/insertarMensaje.php</string>
 
     <string name="select_picture_title">Obtener Foto De</string>
-
+    <string name="voice_not_found">Voz No encontrada</string>
+    <string name="min">min</string>
+    <string name="sec">sec</string>
 </resources>

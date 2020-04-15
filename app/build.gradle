@@ -88,6 +88,8 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
 
+    implementation 'dyanamitechetan.vusikview:vusikview:1.1'
+
 
 
 }
