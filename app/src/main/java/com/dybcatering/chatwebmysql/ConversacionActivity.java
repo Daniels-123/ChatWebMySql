@@ -10,9 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -22,6 +25,7 @@ import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -37,6 +41,7 @@ import com.dybcatering.chatwebmysql.AdaptadorMensajes.AdaptadorMensajes;
 import com.dybcatering.chatwebmysql.AdaptadorMensajes.Mensaje;
 import com.dybcatering.chatwebmysql.Conversacion.ConversacionLive4T;
 import com.dybcatering.chatwebmysql.usersession.UserSession;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -52,6 +57,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
@@ -84,11 +90,15 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
     FirebaseStorage storage;
     FirebaseDatabase database;
     ProgressDialog progressDialog;
+    UploadTask uploadTask;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversacion);
 
+        storage = FirebaseStorage.getInstance();
+        database = FirebaseDatabase.getInstance();
 
         contentRoot = findViewById(R.id.contentRoot);
         edMessage = findViewById(R.id.textimput);
@@ -97,7 +107,12 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
         btnEnviarMensaje.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                enviarMensaje(edMessage.getText().toString());
+                if (edMessage.getText().toString().isEmpty()){
+                    Toast.makeText(ConversacionActivity.this, "No olvides escribir el mensaje", Toast.LENGTH_SHORT).show();
+                }else{
+
+                    enviarMensaje(edMessage.getText().toString());
+                }
             }
         });
 
@@ -119,7 +134,30 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
             public void onClick(View v) {
                 if (ContextCompat.checkSelfPermission(ConversacionActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)
                 {
-                    selectPDF();
+                    AlertDialog.Builder adb = new AlertDialog.Builder(ConversacionActivity.this);
+                    adb.setTitle("Selecciona el tipo de archivo");
+                    adb.setIcon(android.R.drawable.ic_dialog_info);
+                    adb.setPositiveButton("Imagen", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            selectImage("image/*");
+
+                        }
+                    });
+                    adb.setNegativeButton("Archivo PDF", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            selectImage("application/pdf");
+                        }
+                    });
+
+                    adb.setNeutralButton("s", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+
+                    adb.show();
+
 
 
 
@@ -139,10 +177,10 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
         {
 
 
-            selectPDF();
+            selectImage("image/*");
 
             if (pdfUri!= null){
-                uploadFile(pdfUri);
+                subirstack(pdfUri, "*/*");
             }else{
                 Toast.makeText(ConversacionActivity.this, "Por Favor seleccione un archivo", Toast.LENGTH_SHORT).show();
             }
@@ -155,10 +193,10 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 
     }
 
-    private void selectPDF() {
+    private void selectImage(String tipo) {
 
         Intent intent = new Intent();
-        intent.setType("*/*");
+        intent.setType(tipo);
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(intent, 86);
 
@@ -171,9 +209,11 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 86 && resultCode == RESULT_OK && data != null) {
             pdfUri = data.getData();
-            Toast.makeText(this, "archivo seleccionado: "+ data.getData().getLastPathSegment(), Toast.LENGTH_SHORT).show();
+            ContentResolver cr = this.getContentResolver();
+            String mime = cr.getType(pdfUri);
+            Toast.makeText(this, "archivo seleccionado: "+ data.getData().getLastPathSegment() + mime, Toast.LENGTH_SHORT).show();
 
-                uploadFile(pdfUri);
+                subirstack(pdfUri, mime);
 
 
         } else {
@@ -184,72 +224,168 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 
     }
 
-    private void uploadFile(Uri pdfUri) {
-
+    private void subirstack(Uri pdfUri, String tipo){
         progressDialog = new ProgressDialog(this);
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setTitle("Subiendo Archivo...");
         progressDialog.setProgress(0);
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        final String fileName = System.currentTimeMillis()+"";
-        StorageReference storageReference = storage.getReference();
+        final File file = new File(String.valueOf(pdfUri));
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        final StorageReference storageRef = storage.getReference().child(String.valueOf(pdfUri+tipo));
+        uploadTask = storageRef.putFile(pdfUri);
 
-        storageReference.child("Subidas").child(fileName).putFile(pdfUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+        Task<Uri> uriTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()){
+                    throw task.getException();
+                }
+                return storageRef.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    String downloadURL = downloadUri.toString();
 
+                    DatabaseReference reference= database.getReference("files");
 
+                    reference.push().setValue(downloadURL);
+                    guardarImagen(downloadURL);
 
-                // String url = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
-                Task<Uri> downloadUri = taskSnapshot.getStorage().getDownloadUrl();
-                if(downloadUri.isSuccessful()){
-                    String generatedFilePath = downloadUri.getResult().toString();
-                    System.out.println("## Stored path is "+generatedFilePath);
-                    Toast.makeText(ConversacionActivity.this, "el path es "+ generatedFilePath, Toast.LENGTH_SHORT).show();
-
-                    //    DatabaseReference reference= database.getReference().child("files");
-                    DatabaseReference reference= database.getReference("Subidas");
-
-                    reference.child(fileName).setValue(generatedFilePath).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    progressDialog.dismiss();
+/*                    reference.child(String.valueOf(file)).setValue(downloadURL).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()){
                                 progressDialog.dismiss();
-                                Toast.makeText(ConversacionActivity.this, "Archivo subido", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Archivo subido", Toast.LENGTH_SHORT).show();
                             }else{
                                 progressDialog.dismiss();
-                                Toast.makeText(ConversacionActivity.this, "No se pudo subir el archivo", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "No se pudo subir el archivo", Toast.LENGTH_SHORT).show();
                             }
                         }
-                    });
-
-
-
-
-                }else{
-
-                }
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                progressDialog.dismiss();
-                Toast.makeText(ConversacionActivity.this, "No se pudo subir el archivo", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot) {
-                int currentProgress = (int) (100*taskSnapshot.getBytesTransferred()/taskSnapshot.getTotalByteCount());
-                progressDialog.setProgress(currentProgress);
-                if (currentProgress == 100){
-                    progressDialog.dismiss();
+                    });*/
+                } else {
+                    Toast.makeText(ConversacionActivity.this, "algo salio mal papi", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+/*
+        storageRef.child("files").putFile(pdfUri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    //    pd.dismiss();
+                        Toast.makeText(MainActivity.this, "Image Uploaded Successfully", Toast.LENGTH_SHORT).show();
+                        Task<Uri> downloadUri = taskSnapshot.getStorage().getDownloadUrl();
+
+                        if(downloadUri.isComplete()){
+                            String generatedFilePath = downloadUri.getResult().toString();
+                            System.out.println("## Stored path is "+generatedFilePath);
+                            Toast.makeText(MainActivity.this, "el path es "+ generatedFilePath, Toast.LENGTH_SHORT).show();
+
+                            DatabaseReference reference= database.getReference("files");
+
+                            reference.child(String.valueOf(file)).setValue(generatedFilePath).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        progressDialog.dismiss();
+                                        Toast.makeText(MainActivity.this, "Archivo subido", Toast.LENGTH_SHORT).show();
+                                    }else{
+                                        progressDialog.dismiss();
+                                        Toast.makeText(MainActivity.this, "No se pudo subir el archivo", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+
+
+
+
+                        }else{
+                            Toast.makeText(MainActivity.this, "error aqui", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(MainActivity.this, "falla", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(@NonNull UploadTask.TaskSnapshot taskSnapshot) {
+                        int currentProgress = (int) (100*taskSnapshot.getBytesTransferred()/taskSnapshot.getTotalByteCount());
+                        progressDialog.setProgress(currentProgress);
+                        if (currentProgress == 100){
+                            progressDialog.dismiss();
+                        }
+                    }
+                });*/
+
+    }
+
+    private void guardarImagen(final String downloadURL) {
+
+        int tipo = 1;
+
+
+
+        if (downloadURL.contains("pdf")){
+            tipo = 2;
+
+        } else if (downloadURL.contains(".jpg") || downloadURL.contains(".jpeg") || downloadURL.contains(".png") || downloadURL.contains("image")){
+            tipo = 4;
+        } else if (downloadURL.contains(".doc")){
+            tipo = 3;
+        } else if (downloadURL.contains(".mp3")){
+            tipo = 5;
+        }
+        final int finalTipo = tipo;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, getResources().getString(R.string.URL_SERVER),
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+                        // En este apartado se programa lo que deseamos hacer en caso de no haber errores
+                        edMessage.setText("");
+                        mItemMensajes.clear();
+                        ObtenerDatos();
+
+                        recyclergrupos.scrollToPosition(mItemMensajes.size()-1);
+                        Toast.makeText(ConversacionActivity.this, response, Toast.LENGTH_LONG).show();
+                        //					etTexto.setText("");
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // En caso de tener algun error en la obtencion de los datos
+                Toast.makeText(ConversacionActivity.this, "ERROR EN LA CONEXIÓN"+ error.toString(), Toast.LENGTH_LONG).show();
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                final String tipostring = String.valueOf(finalTipo);
+                // En este metodo se hace el envio de valores de la aplicacion al servidor
+
+                Map<String, String> parametros = new Hashtable<String, String>();
+                parametros.put("usuario", "3");//usuario.getUsuario());
+                parametros.put("grupo", "2");// usuarioDestino.getUsuario());
+                parametros.put("tipo", tipostring);
+                parametros.put("mensaje", downloadURL);
+                return parametros;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
     }
 
 
@@ -349,7 +485,7 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
                 Map<String, String> parametros = new Hashtable<String, String>();
                 parametros.put("usuario", "3");//usuario.getUsuario());
                 parametros.put("grupo", "2");// usuarioDestino.getUsuario());
-
+                parametros.put("tipo", "1");
                 parametros.put("mensaje", s);
                 return parametros;
             }
