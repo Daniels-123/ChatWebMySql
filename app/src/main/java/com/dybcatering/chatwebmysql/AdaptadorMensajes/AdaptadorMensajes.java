@@ -78,6 +78,8 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 		switch (tipomensaje) {
 
 			case "5":
+				holder.mDocumentoPDF.setVisibility(View.GONE);
+				holder.mDocumentoWord.setVisibility(View.GONE);
                 holder.mImagen.setVisibility(View.GONE);
 				holder.mAudio.setVisibility(View.VISIBLE);
 				holder.mMensaje.setVisibility(View.GONE);
@@ -302,7 +304,10 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 						}
 
 					};
-					mp3Play.execute("https://firebasestorage.googleapis.com/v0/b/diarios-2a7fd.appspot.com/o/Subidas%2FSubidas_1586847089260_alt%3Dmedia%26token%3D3bd4f03b-77e3-4957-88c2-6d0dafccea18.mp3%20(online-audio-converter.com).mp3?alt=media&token=acf83f0b-5fcc-472c-94a0-bb5e4fabbc12");
+					Mensaje mismoitem = (Mensaje) mExampleList.get(getAdapterPosition());
+
+					mp3Play.execute(mismoitem.getMensajeEnviado());
+					//					mp3Play.execute(mismoitem.getMensajeEnviado()"https://firebasestorage.googleapis.com/v0/b/diarios-2a7fd.appspot.com/o/Subidas%2FSubidas_1586847089260_alt%3Dmedia%26token%3D3bd4f03b-77e3-4957-88c2-6d0dafccea18.mp3%20(online-audio-converter.com).mp3?alt=media&token=acf83f0b-5fcc-472c-94a0-bb5e4fabbc12");
 
 				}
 			});
