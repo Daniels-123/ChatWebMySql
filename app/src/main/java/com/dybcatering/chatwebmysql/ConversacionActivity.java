@@ -149,10 +149,10 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
                         }
                     });
 
-                    adb.setNeutralButton("s", new DialogInterface.OnClickListener() {
+                    adb.setNeutralButton("Archivo Doc", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
+                            selectDocumento();
                         }
                     });
 
@@ -170,6 +170,9 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
         });
 
     }
+
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
@@ -202,6 +205,18 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 
 
     }
+
+    private void selectDocumento() {
+
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        String[] mimetypes = {"application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"};
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, mimetypes);
+        startActivityForResult(intent, 86);
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
