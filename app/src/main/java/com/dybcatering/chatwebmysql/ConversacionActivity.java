@@ -15,9 +15,12 @@ import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -58,10 +61,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Timer;
+import java.util.UUID;
 
 import hani.momanii.supernova_emoji_library.Actions.EmojIconActions;
 import hani.momanii.supernova_emoji_library.Helper.EmojiconEditText;
@@ -79,7 +84,7 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
     Button btEnviar;
     LinearLayout linearhorizontal;
 
-    private ImageView ButtonEmoji;
+    private ImageView ButtonEmoji, playmic, stopmic;
     private Button btnEnviarMensaje;
     private EmojiconEditText edMessage;
     private View contentRoot;
@@ -92,6 +97,12 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
     ProgressDialog progressDialog;
     UploadTask uploadTask;
 
+    final int REQUEST_PERMISSION_CODE = 1000;
+    String pathSave = "";
+    MediaRecorder mediaRecorder;
+    MediaPlayer mediaPlayer;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +114,8 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
         contentRoot = findViewById(R.id.contentRoot);
         edMessage = findViewById(R.id.textimput);
         ButtonEmoji = findViewById(R.id.emojiimage);
+        playmic = findViewById(R.id.playmic);
+        stopmic = findViewById(R.id.stopmic);
         btnEnviarMensaje = findViewById(R.id.btnEnviar);
         btnEnviarMensaje.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,6 +129,53 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
             }
         });
 
+        playmic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (checkPermissionFromDevice()){
+
+
+
+
+                    pathSave  = Environment.getExternalStorageDirectory()
+                            .getAbsolutePath()+"/"
+                            + UUID.randomUUID().toString()+"_audio_record.mp3";
+                    setupMediaRecorder();
+                    try {
+                        mediaRecorder.prepare();
+                        mediaRecorder.start();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                        playmic.setEnabled(false);
+                        stopmic.setEnabled(true);
+                    //   playmic.setBackgroundResource(R.drawable.mic_off);
+
+                    Toast.makeText(ConversacionActivity.this, "Grabando...", Toast.LENGTH_SHORT).show();
+                }else{
+                    requestPermission();
+
+                }
+
+            }
+        });
+
+        stopmic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mediaRecorder.stop();
+                playmic.setEnabled(true);
+                stopmic.setEnabled(false);
+                Uri archivo = Uri.fromFile(new File(pathSave));
+                subirstack(archivo, "mp3");
+
+
+                //  ContextWrapper contextWrapper = new ContextWrapper(getApplicationContext());
+                //File directory = contextWrapper.getDir(pathSave, Context.MODE_PRIVATE);
+               // File myInternalFile = new File(directory , "audio");
+               // subirstack(Uri.parse(String.valueOf(new File(String.valueOf(myInternalFile))))), "mp3");
+            }
+        });
 
         EmojIconActions emojIcon = new EmojIconActions(this, contentRoot, edMessage, ButtonEmoji);
         emojIcon.ShowEmojIcon();
@@ -172,29 +232,6 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
     }
 
 
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
-        if (requestCode==9 && grantResults[0]== PackageManager.PERMISSION_GRANTED)
-        {
-
-
-            selectImage("image/*");
-
-            if (pdfUri!= null){
-                subirstack(pdfUri, "*/*");
-            }else{
-                Toast.makeText(ConversacionActivity.this, "Por Favor seleccione un archivo", Toast.LENGTH_SHORT).show();
-            }
-
-        }else
-        {
-            Toast.makeText(this, "Por favor acepte los permisos", Toast.LENGTH_SHORT).show();
-        }
-
-
-    }
 
     private void selectImage(String tipo) {
 
@@ -610,7 +647,65 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
         //}/*/
     }
 
-    private void startDownload() {
+    private void setupMediaRecorder() {
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_WB);
+        mediaRecorder.setOutputFile(pathSave);
+    }
+
+    private void requestPermission() {
+
+        ActivityCompat.requestPermissions(this, new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.RECORD_AUDIO
+        },REQUEST_PERMISSION_CODE);
 
     }
+
+    private boolean checkPermissionFromDevice() {
+        int write_external_storage_result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int record_audio_result = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
+        return write_external_storage_result == PackageManager.PERMISSION_GRANTED &&
+                record_audio_result == PackageManager.PERMISSION_GRANTED;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode==9 && grantResults[0]== PackageManager.PERMISSION_GRANTED)
+        {
+
+
+            selectImage("image/*");
+
+            if (pdfUri!= null){
+                subirstack(pdfUri, "*/*");
+            }else{
+                Toast.makeText(ConversacionActivity.this, "Por Favor seleccione un archivo", Toast.LENGTH_SHORT).show();
+            }
+
+        }else
+        {
+            Toast.makeText(this, "Por favor acepte los permisos", Toast.LENGTH_SHORT).show();
+        }
+
+        switch (requestCode) {
+            case REQUEST_PERMISSION_CODE:
+            {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(this, "Permiso Concedido", Toast.LENGTH_SHORT).show();
+
+                }else{
+                    Toast.makeText(this, "Permiso denegado", Toast.LENGTH_SHORT).show();
+                }
+            }
+            break;
+        }
+    }
+
+
+
 }
