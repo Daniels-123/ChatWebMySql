@@ -98,7 +98,7 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 				break;
 
 			case "3":
-				
+
 				holder.mImagen.setVisibility(View.GONE);
 				holder.mDocumentoWord.setVisibility(View.VISIBLE);
 				holder.mMensaje.setVisibility(View.GONE);

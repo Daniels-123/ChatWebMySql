@@ -186,8 +186,15 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
 
         mRequestQueue = Volley.newRequestQueue(ConversacionActivity.this);
         mLinearLayoutManager = new LinearLayoutManager(this);
-        mLinearLayoutManager.setStackFromEnd(true);
         ObtenerDatos();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                recyclergrupos.scrollToPosition(mItemMensajes.size()-1);
+            }
+        }, 200);
+        //        recyclergrupos.scrollToPosition(mItemMensajes.size()-1);
+
         seleccionar = findViewById(R.id.btnsubir);
         seleccionar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -411,7 +418,14 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
                         mItemMensajes.clear();
                         ObtenerDatos();
 
-                        recyclergrupos.scrollToPosition(mItemMensajes.size()-1);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                recyclergrupos.scrollToPosition(mItemMensajes.size()-1);
+                            }
+                        }, 200);
+
+//                        recyclergrupos.scrollToPosition(mItemMensajes.size()-1);
                         Toast.makeText(ConversacionActivity.this, response, Toast.LENGTH_LONG).show();
                         //					etTexto.setText("");
                     }
@@ -517,8 +531,13 @@ public class ConversacionActivity extends AppCompatActivity implements Adaptador
                        edMessage.setText("");
                        mItemMensajes.clear();
                        ObtenerDatos();
-
-                        recyclergrupos.scrollToPosition(mItemMensajes.size()-1);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                recyclergrupos.scrollToPosition(mItemMensajes.size()-1);
+                            }
+                        }, 200);
+                      //  recyclergrupos.scrollToPosition(mItemMensajes.size()-1);
                         Toast.makeText(ConversacionActivity.this, response, Toast.LENGTH_LONG).show();
                         //					etTexto.setText("");
                     }
