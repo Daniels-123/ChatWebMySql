@@ -88,7 +88,7 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
                 holder.mAudio.setVisibility(View.GONE);
                 holder.mImagen.setVisibility(View.VISIBLE);
 				holder.mMensaje.setVisibility(View.GONE);
-				Picasso.with(mContext).load("http://i.imgur.com/DvpvklR.png").fit().centerCrop()
+				Picasso.with(mContext).load(mismoitem.getMensajeEnviado()).fit().centerCrop()
 						.into(holder.mImagen);
 
 				break;
