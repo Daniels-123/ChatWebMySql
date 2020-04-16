@@ -78,14 +78,15 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 		switch (tipomensaje) {
 
 			case "5":
-
+                holder.mImagen.setVisibility(View.GONE);
 				holder.mAudio.setVisibility(View.VISIBLE);
 				holder.mMensaje.setVisibility(View.GONE);
 
 				break;
 
 			case "4":
-				holder.mImagen.setVisibility(View.VISIBLE);
+                holder.mAudio.setVisibility(View.GONE);
+                holder.mImagen.setVisibility(View.VISIBLE);
 				holder.mMensaje.setVisibility(View.GONE);
 				Picasso.with(mContext).load("http://i.imgur.com/DvpvklR.png").fit().centerCrop()
 						.into(holder.mImagen);
@@ -109,10 +110,13 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 
 
 			case "1":
-				if (mismoitem.getUsuario().equals("Daniel")) {
+                holder.mAudio.setVisibility(View.GONE);
+
+                if (mismoitem.getUsuario().equals("Daniel")) {
 					holder.mImagen.setVisibility(View.GONE);
 					holder.mMensaje.setVisibility(View.VISIBLE);
-
+					holder.mDocumentoPDF.setVisibility(View.GONE);
+					holder.mDocumentoWord.setVisibility(View.GONE);
 					holder.mNombreUsuario.setGravity(Gravity.RIGHT);
 					holder.mMensaje.setGravity(Gravity.RIGHT);
 					holder.mFecha.setGravity(Gravity.RIGHT);
@@ -121,7 +125,12 @@ public class AdaptadorMensajes extends RecyclerView.Adapter<AdaptadorMensajes.Gr
 					holder.mMensaje.setText(mensaje);
 					holder.mFecha.setText(horaenviado);
 				} else {
-					holder.mNombreUsuario.setGravity(Gravity.LEFT);
+                    holder.mImagen.setVisibility(View.GONE);
+                    holder.mMensaje.setVisibility(View.VISIBLE);
+                    holder.mDocumentoPDF.setVisibility(View.GONE);
+                    holder.mDocumentoWord.setVisibility(View.GONE);
+
+                    holder.mNombreUsuario.setGravity(Gravity.LEFT);
 					holder.mMensaje.setGravity(Gravity.LEFT);
 					holder.mFecha.setGravity(Gravity.LEFT);
 					holder.mFecha.setTextColor(Color.RED);
